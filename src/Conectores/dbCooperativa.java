@@ -1,6 +1,7 @@
 package Conectores;
 
 import Clases.Cooperativa;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
@@ -25,6 +26,18 @@ public class dbCooperativa extends Conexion{
             System.out.println("[COOP-ERROR1]: " + e);
         }
     }    
+    
+    public List<Cooperativa> traerCooperativas() throws SQLException{
+        List<Cooperativa> lista = new ArrayList();
+        sql = "SELECT * FROM " + in + " ORDER BY id ASC";
+        res = conector.prepareStatement(sql).executeQuery();
+        while(res.next()){
+            lista.add(
+                    new Cooperativa(res.getInt(1), res.getString(2), res.getString(3),res.getString(6))
+            );
+        }
+        return lista;
+    }
     
     public void actualizarCooperativa(int id,boolean estado){
         try {

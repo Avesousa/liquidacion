@@ -1,4 +1,4 @@
-package excel;
+package Archivos;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -75,6 +75,12 @@ public class Excel {
     public void agregarCelda(Row f, int i){
         this.celda = f.createCell(i);
         adaptarCelda(i);
+    }
+    
+    public Cell agregarCelda(int i, Row f, boolean t){
+        this.celda = f.createCell(i);
+        adaptarCelda(i);
+        return this.celda;
     }
     
     public Cell traerCelda(int ubicacion){

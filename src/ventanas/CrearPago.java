@@ -3,6 +3,7 @@ package ventanas;
 import Clases.DiasMesAnio;
 import Clases.Fecha;
 import Clases.Feriados;
+import Clases.GeneradorDePago;
 import Conectores.dbFeriados;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,12 +19,11 @@ import liquidacion.Generar;
 
 public class CrearPago extends javax.swing.JFrame {
 
-    private String lineaPersona = "\n20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
     public CrearPago() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.barraProgreso.setVisible(false);
-        this.fechaPrimaria.setDate(new Date());
+        //this.fechaSecundaria.setDate(new Date());
         this.fechaPrimaria.setMaxSelectableDate(new Date());
         this.fechaSecundaria.setMaxSelectableDate(new Date());
         //this.textoProgreso.setVisible(false);
@@ -47,6 +47,7 @@ public class CrearPago extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -84,6 +85,13 @@ public class CrearPago extends javax.swing.JFrame {
 
         jLabel4.setText("Mensaje para incluir al correo:");
 
+        jButton1.setText("PRUEBA");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -92,6 +100,8 @@ public class CrearPago extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(obtener_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(34, 34, 34))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -145,7 +155,9 @@ public class CrearPago extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(74, 74, 74)
-                .addComponent(obtener_fecha)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(obtener_fecha)
+                    .addComponent(jButton1))
                 .addGap(87, 87, 87))
         );
 
@@ -154,24 +166,7 @@ public class CrearPago extends javax.swing.JFrame {
 
     private void obtener_fechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_obtener_fechaActionPerformed
         if(!this.d_ruta.getText().equals("")){
-            Date fechaUno = this.fechaPrimaria.getDate();
-            Date fechaDos = this.fechaSecundaria.getDate();
-            Calendar calenUno = this.fechaPrimaria.getCalendar();
-            Calendar calenDos = this.fechaSecundaria.getCalendar();
-            String rutaR = this.d_ruta.getText();
-            List<DiasMesAnio> dias = new ArrayList();
-            try{
-            File archivo = new File(rutaR+"/prueba.txt");
-            if(!archivo.exists())
-                archivo.createNewFile();
-            FileWriter fw = new FileWriter(archivo);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(primeraLinea());
-            bw.write(crearLinea("297710296922000","AGUIRRE JORGE ANIBAL FIGUEIRA","31014853","1540020"));
-            bw.close();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            new GeneradorDePago(this.fechaPrimaria.getCalendar(),this.fechaSecundaria.getCalendar(),this.d_ruta.getText());
         }
     }//GEN-LAST:event_obtener_fechaActionPerformed
     
@@ -188,6 +183,10 @@ public class CrearPago extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_traerRuta
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JProgressBar barraProgreso;
@@ -195,6 +194,7 @@ public class CrearPago extends javax.swing.JFrame {
     public javax.swing.JTextField d_ruta;
     public com.toedter.calendar.JDateChooser fechaPrimaria;
     public com.toedter.calendar.JDateChooser fechaSecundaria;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -206,74 +206,4 @@ public class CrearPago extends javax.swing.JFrame {
     public javax.swing.JLabel textoProgreso;
     // End of variables declaration//GEN-END:variables
     
-    //C:CUENTA / I:IMPORTE / A:ASOCIADO / D:DOCUMENTO
-    
-    private String crearLinea(String cabal, String asociado, String documento, String monto){
-        char[] banderaLinea = lineaPersona.toCharArray();
-        System.out.println("CREAR LINEA");
-        int doc = documento.length()-1;
-        int nom = 0;
-        int mon = monto.length()-1;
-        int cab = cabal.length()-1;
-        for(int i = banderaLinea.length -1; i >= 0; i--){
-            System.out.println(banderaLinea[i]);
-            if(i > 57 && i < 70 ){
-                try{
-                    banderaLinea[i] = documento.charAt(doc);
-                    doc--;
-                }catch(IndexOutOfBoundsException e){
-                    banderaLinea[i] = '0';
-                }
-            } else if(i > 16 && i < 28){
-                try{
-                    banderaLinea[i] = monto.charAt(mon);
-                    mon--;
-                }catch(IndexOutOfBoundsException e){
-                    banderaLinea[i] = '0';
-                }
-            } else if(i > 0 && i < 18){
-                try{
-                    banderaLinea[i] = cabal.charAt(cab);
-                    cab--;
-                }catch(IndexOutOfBoundsException e){
-                    banderaLinea[i] = '0';
-                }
-            }
-        }
-        
-        for(int i = 29; i < (29+29); i++){
-            if(i < 59){
-                try {
-                    banderaLinea[i] = asociado.charAt(nom);
-                    nom++;
-                } catch (Exception e) {
-                    banderaLinea[i] = ' ';
-                }
-            }
-        }
-        
-        return String.valueOf(banderaLinea);
-        
-    }
-    
-    private String primeraLinea() {
-        String linea = "12018050101052000201687                    34999032089034180                             ";
-        char[] banderaLinea = linea.toCharArray();
-        
-        Date fecha = new Date();
-        
-        String anio = String.valueOf(fecha.getYear() + 1900);
-        String mes = (fecha.getMonth() + 1) < 10 ? "0"+String.valueOf(fecha.getMonth() + 1) : String.valueOf(fecha.getMonth() + 1);
-        String dia = (fecha.getDay() < 10) ? "0"+String.valueOf(fecha.getDay()) : String.valueOf(fecha.getDay());
-        
-        for(int i = 1; i < 5; i++)
-            banderaLinea[i] = anio.charAt(i-1);
-        for(int j = 5; j < 7; j++)
-            banderaLinea[j] = mes.charAt(j-5);
-        for(int k = 7; k < 9; k++)
-            banderaLinea[k] = dia.charAt(k-7);
-        
-        return String.valueOf(banderaLinea);
-        
-    }
 }

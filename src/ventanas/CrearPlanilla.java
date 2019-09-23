@@ -4,6 +4,7 @@ import Clases.CerrarVentana;
 import Clases.DiasMesAnio;
 import Clases.Fecha;
 import Clases.Feriados;
+import Clases.VerificarFeriados;
 import Conectores.dbFeriados;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -179,7 +180,7 @@ public class CrearPlanilla extends javax.swing.JFrame {
             if(fechaUno != null && fechaDos != null){
                 while(calenUno.before(calenDos) || calenUno.equals(calenDos)){
                     if(calenUno.get(Calendar.DAY_OF_WEEK) != 7 && calenUno.get(Calendar.DAY_OF_WEEK) != 1){
-                        if(verificarFeriados(calenUno.getTime())){
+                        if(new VerificarFeriados().verificar(calenUno.getTime())){
                             dias.add(new DiasMesAnio(
                             Fecha.dia(calenUno.get(Calendar.DAY_OF_WEEK)-1),
                             calenUno.get(Calendar.DAY_OF_MONTH),
@@ -236,16 +237,5 @@ public class CrearPlanilla extends javax.swing.JFrame {
     public javax.swing.JLabel textoProgreso;
     // End of variables declaration//GEN-END:variables
 
-    private boolean verificarFeriados(Date dia) {
-        dbFeriados co = new dbFeriados();
-        co.traerFeriados();
-        List<Feriados> feriado = co.lista;
-        for(int i = 0; i < feriado.size(); i++){
-            if((dia.getMonth() == feriado.get(i).darMes()
-                    && dia.getDate() == feriado.get(i).darDia())){
-                return false;
-            }
-        }
-        return true;
-    }
+    
 }

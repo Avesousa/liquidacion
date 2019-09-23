@@ -73,4 +73,8 @@ public class Fecha {
         }
     }
     
+    public static java.sql.Date convertir(java.util.Date fecha){
+        return new java.sql.Date(fecha.getTime());
+    }
+    
 }

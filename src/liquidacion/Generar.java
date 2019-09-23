@@ -4,7 +4,7 @@ package liquidacion;
 import Clases.Coordinador;
 import Clases.Correo;
 import Clases.DiasMesAnio;
-import excel.Excel;
+import Archivos.Excel;
 import java.util.List;
 import Clases.Trabajador;
 import Conectores.dbCoordinador;

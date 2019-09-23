@@ -6,7 +6,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class Trabajador {
+public class Trabajador{
     
     private List informacion = new ArrayList();
     public double sueldo;
@@ -22,6 +22,7 @@ public class Trabajador {
     private String ubicacion;
     private String division;
     private String cooperativa;
+    private int coop;
     private String cbu;
     private String cabal;
     private String genero;
@@ -67,11 +68,74 @@ public class Trabajador {
         informacion.add(ubicacion);
         sueldo = monto;
         tipo = tipo;
+        this.id = id;
+        this.cuil = doc;
+        this.nombre = nom;
+        this.apellido = apel;
+        this.tipoR = tipo;
+        this.funcion = funcion;
+        this.ubicacion = ubicacion;
+        
     } 
+    
+    public Trabajador(int id, Long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto, String cbu, String cabal, int dni, int cooperativa){
+        
+        sueldo = monto;
+        this.id = id;
+        this.cuil = doc;
+        this.nombre = nom;
+        this.apellido = apel;
+        this.tipoR = tipo;
+        this.funcion = funcion;
+        this.ubicacion = ubicacion;
+        this.cbu = cbu;
+        this.cabal = cabal;
+        this.documento = dni;
+        this.coop = cooperativa;
+        
+    } 
+    
     
     public List dameDatos(){
         return informacion;
     }
+
+    public int getCoop(){
+        return coop;
+    }
+    
+    public int getId() {
+        return id;
+    }
+
+    public int getDocumento() {
+        return documento;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public String getCbu() {
+        return cbu;
+    }
+
+    public String getCabal() {
+        return cabal;
+    }
+
+    public int getRur() {
+        return rur;
+    }
+    
     
     public void colocarTabla(DefaultTableModel tabla){
         Object [] lista = new Object[9];

@@ -1,6 +1,6 @@
 package pruebas;
 
-import excel.Excel;
+import Archivos.Excel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

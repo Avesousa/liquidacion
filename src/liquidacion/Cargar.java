@@ -2,7 +2,7 @@ package liquidacion;
 
 import Conectores.dbError;
 import Conectores.dbPresente;
-import excel.Excel;
+import Archivos.Excel;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;

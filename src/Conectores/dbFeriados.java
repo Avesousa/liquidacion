@@ -76,5 +76,21 @@ public class dbFeriados extends Conexion {
             System.out.println("[FERIADO-ERROR4]: " + e);
         }
     }
+    
+    public int contarFeriados(java.sql.Date fechaStart, java.sql.Date fechaEnd){
+        int num = 0;
+        try {
+            sql = "SELECT * FROM incentivo.feriados WHERE fecha BETWEEN '" + fechaStart + "' AND '" + fechaEnd;
+            ps = conector.prepareStatement(sql);
+            res = ps.executeQuery();
+            while(res.next()){
+                num++;
+            }
+            return num;
+        } catch (Exception e) {
+            System.out.println("[FERIADO-ERROR1]: " + e);
+            return 0;
+        }
+    }
 
 }
