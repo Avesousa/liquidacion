@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ListaCabal implements Runnable {
+public class Listar implements Runnable {
     private List<DiaTrabajado> trabajadores;
     private String ruta;
     private Excel documento;
     private int dias;
-    public ListaCabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles){
+    private boolean esCabal = false;
+    
+    public Listar(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, boolean cabal){
         this.trabajadores = trabajadores;
         this.ruta = ruta;
         this.dias = diasHabiles;
+        this.esCabal = cabal;
     }
     
     @Override
@@ -38,7 +41,8 @@ public class ListaCabal implements Runnable {
                     //DNI
                     documento.agregarCelda(2, documento.fila, true).setCellValue(trabajador.getDocumento());
                     //CUENTA CABAL
-                    documento.agregarCelda(3, documento.fila, true).setCellValue(trabajador.getCabal());
+                    if(esCabal) documento.agregarCelda(3, documento.fila, true).setCellValue(trabajador.getCabal());
+                    else documento.agregarCelda(3, documento.fila, true).setCellValue(trabajador.getCbu());
                     //IMPORTE
                     documento.agregarCelda(4, documento.fila, true).setCellValue(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, trabajador.sueldo, dias)));
                     //IMPORTE TOTAL
@@ -48,7 +52,7 @@ public class ListaCabal implements Runnable {
                 }
             }
             documento.agregarCelda(4, documento.agregarFila(documento.hoja.getLastRowNum())).setCellValue(Sueldo.formatear(montoTotal));
-            documento.guardarArchivo(ruta+"/LISTADOCABAL" + (fecha.getDate()) + "-" + (fecha.getMonth()+1) + ".xlsx");
+            documento.guardarArchivo(ruta+"/LISTADO" + (fecha.getDate()) + "-" + (fecha.getMonth()+1) + ".xlsx");
             documento = null;
         }
     }

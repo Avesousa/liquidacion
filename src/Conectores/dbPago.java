@@ -1,5 +1,6 @@
 package Conectores;
 
+import Clases.Condiciones;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.logging.Level;
@@ -35,5 +36,28 @@ public class dbPago extends Conexion{
             JOptionPane.showMessageDialog(null,"Se ha generado un error en Base de Datos...");
             return false;
         }
+    }
+    
+    public Condiciones traerCondiciones(int id, Date fs, Date fe) throws SQLException{
+        Condiciones valor = new Condiciones();
+        
+        sql = "SELECT monto, metodo FROM incentivo.condiciones WHERE id_asociado = " + id +
+              " AND fecha_inicio BETWEEN '" + fs + "' AND '" + fe + "'";
+        ps = conector.prepareStatement(sql);
+        res = ps.executeQuery();
+        while(res.next()){
+            try {
+                if(res.getDouble(1) > 0)
+                    valor.agregarMonto(res.getDouble(1));
+                if(!res.getString(2).equals(""))
+                    valor.agregarMetodo(res.getString(2));
+            } catch (Exception e) {
+                System.out.println("¡--!");
+            }
+            
+        }
+        
+        
+        return valor;
     }
 }

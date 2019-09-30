@@ -1,5 +1,6 @@
 package Clases;
 
+import Pagos.Sueldo;
 import com.toedter.calendar.JDateChooser;
 import java.util.*;
 import javax.swing.JComboBox;
@@ -11,6 +12,10 @@ public class Trabajador{
     private List informacion = new ArrayList();
     public double sueldo;
     public String tipo;
+    private double montoCondicional = 0;
+    private String metodoCondicional = "";
+    private double montoCobrar;
+    public int diasTrabajados;
     
     //Datos de las personas
     private int id;
@@ -25,6 +30,7 @@ public class Trabajador{
     private int coop;
     private String cbu;
     private String cabal;
+    private String rai;
     private String genero;
     private String correo;
     private int bolson;
@@ -34,6 +40,7 @@ public class Trabajador{
     private int rur;
     private String telefono;
     private List<JComboBox> select;
+    
 
     public Trabajador(int id, int documento, String nombre, String apellido, String tipoR, String funcion, String ubicacion, String division, String cooperativa, String cbu, String cabal, int bolson, String turno, long cuil, Date fecha, String correo, String genero, int rur, String telefono) {
         this.id = id;
@@ -56,8 +63,7 @@ public class Trabajador{
         this.rur = rur;
         this.telefono = telefono;
     }
-
-    public Trabajador(int id, Long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto){
+    public Trabajador(int id, long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto){
         
         informacion.add(String.valueOf(id));
         informacion.add(String.valueOf(doc));
@@ -77,8 +83,7 @@ public class Trabajador{
         this.ubicacion = ubicacion;
         
     } 
-    
-    public Trabajador(int id, Long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto, String cbu, String cabal, int dni, int cooperativa){
+    public Trabajador(int id, long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto, String cbu, String cabal, int dni, int cooperativa, int dias, String rai){
         
         sueldo = monto;
         this.id = id;
@@ -92,6 +97,8 @@ public class Trabajador{
         this.cabal = cabal;
         this.documento = dni;
         this.coop = cooperativa;
+        this.diasTrabajados = dias;
+        this.rai = rai;
         
     } 
     
@@ -99,43 +106,60 @@ public class Trabajador{
     public List dameDatos(){
         return informacion;
     }
-
+    
+    //Tomador de información
     public int getCoop(){
         return coop;
     }
-    
     public int getId() {
         return id;
     }
-
     public int getDocumento() {
         return documento;
     }
-
+    public long getCuil(){
+        return this.cuil;
+    }
     public String getNombre() {
         return nombre;
     }
-
     public String getApellido() {
         return apellido;
     }
-
     public String getUbicacion() {
         return ubicacion;
     }
-
     public String getCbu() {
         return cbu;
     }
-
     public String getCabal() {
         return cabal;
     }
-
+    public String getRai(){
+        return this.rai;
+    }
     public int getRur() {
         return rur;
     }
+    public double getMontoCondicional(){
+        return montoCondicional;
+    }
+    public String getMetodoCondicional(){
+        return metodoCondicional;
+    }
     
+    //Insertación de información
+    
+    public void setMetodoCondicional(String metodo){
+        metodoCondicional = metodo;
+    } 
+    public void agregarMontoCondicional(double monto){
+        montoCondicional += monto;
+    }
+    public double montoCobrar(int diasHabiles){
+    montoCobrar = Sueldo.hacer(diasTrabajados, sueldo, diasHabiles) + this.montoCondicional;
+        return montoCobrar;
+    }
     
     public void colocarTabla(DefaultTableModel tabla){
         Object [] lista = new Object[9];
@@ -150,7 +174,6 @@ public class Trabajador{
                 lista[8] = division;
                 tabla.addRow(lista);
     }
-    
     public void colocarInput( List<JTextField> inputs,List<JComboBox> select){
         
         inputs.get(0).setText(apellido);
@@ -170,12 +193,10 @@ public class Trabajador{
         select.get(5).setSelectedIndex(buscador(tipoR,select.get(5)));
         this.select = select;
         
-    }
-    
+    }    
     public void colocarProcedencia(){
         select.get(4).setSelectedIndex(buscador(ubicacion,select.get(4)));
     }
-    
     public void colocarDivision(){
         try {
             select.get(1).setSelectedIndex(buscador(division,select.get(1)));
@@ -183,12 +204,10 @@ public class Trabajador{
             System.out.println("No tiene ninguna division");
         }
     }
-    
     public Date fecha(){
         System.out.println(this.fecha);
         return this.fecha;
-    }
-    
+    }   
     private int buscador(String texto,JComboBox select){
         for(int i = 0; i < select.getItemCount(); i++)
             if(texto.equals(select.getItemAt(i).toString()))

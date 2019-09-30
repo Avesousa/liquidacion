@@ -19,7 +19,7 @@ public class Cabal implements Runnable{
 
     public Cabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles) {
         this.trabajadores = trabajadores;
-        this.ruta = ruta;
+        this.ruta = ruta + "/Pago Cabal";
         this.dias = diasHabiles;
     }
     
@@ -129,7 +129,7 @@ public class Cabal implements Runnable{
                 File archivo = new File(ruta + "/PAGOCABAL" + (fecha.getDate() > 9 ? fecha.getDate() : '0' + fecha.getDate())+ "-" +(fecha.getMonth()+1) + ".txt");
                 if(!archivo.exists())
                     archivo.createNewFile();
-                Thread listado = new Thread(new ListaCabal(trabajadores,ruta,dias));
+                Thread listado = new Thread(new Listar(trabajadores,ruta,dias,true));
                 listado.start();
                 FileWriter fw = new FileWriter(archivo);
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -137,11 +137,11 @@ public class Cabal implements Runnable{
                 for(int i = 0; i < trabajadores.size(); i++){
                     Trabajador t = trabajadores.get(i).trabajador;
                     bw.write(crearLineaCabal(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias,t.sueldo,dias)))));
-                    montoTotal += Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias,t.sueldo,dias)));
+                    montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
                     cooperativas.get(t.getCoop()-1).add();
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, t.sueldo, dias))));
                 }
-                Thread documento = new Thread(new DocumentoCabal(cooperativas,ruta));
+                Thread documento = new Thread(new Documento(cooperativas,ruta,true));
                 documento.start();
                 bw.write(ultimaLineaCabal(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
                 bw.close();

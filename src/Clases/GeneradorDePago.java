@@ -64,12 +64,32 @@ public class GeneradorDePago {
         List<DiaTrabajado> listaCbu = new ArrayList();
         List<DiaTrabajado> listaCabal = new ArrayList();
         List<DiaTrabajado> listaManual = new ArrayList();
+        List<DiaTrabajado> listaRai = new ArrayList();
         for(int i = 0; i < lista.size(); i++){
-            if(lista.get(i).trabajador.getCbu() != "" && lista.get(i).trabajador.getCbu() != null)
-                listaCbu.add(lista.get(i));
-            else if(lista.get(i).trabajador.getCabal() != "" && lista.get(i).trabajador.getCabal() != null)
-                listaCabal.add(lista.get(i));
-            else listaManual.add(lista.get(i));
+            Trabajador t = lista.get(i).trabajador;
+            
+            if(t.getMetodoCondicional().equals("")){
+                if(!t.getRai().equals("") && t.getRai() != null)
+                    listaRai.add(lista.get(i));
+                else if(!lista.get(i).trabajador.getCbu().equals("") && lista.get(i).trabajador.getCbu() != null)
+                    listaCbu.add(lista.get(i));
+                else if(!lista.get(i).trabajador.getCabal().equals("") && lista.get(i).trabajador.getCabal() != null)
+                    listaCabal.add(lista.get(i));
+                else listaManual.add(lista.get(i));
+                
+            }else{
+                switch(lista.get(i).trabajador.getMetodoCondicional()){
+                    case "cabal":
+                        listaCabal.add(lista.get(i));
+                        break;
+                    case "cbu":
+                        listaCabal.add(lista.get(i));
+                    case "manual":
+                        listaManual.add(lista.get(i));
+                    case "rai":
+                        listaRai.add(lista.get(i));
+                }
+            }
         } 
         Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles));
         cabal.start();

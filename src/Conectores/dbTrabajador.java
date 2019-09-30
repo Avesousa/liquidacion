@@ -34,9 +34,9 @@ public class dbTrabajador extends Conexion{
             return trabajadores;
     }
     
-    public Trabajador traerTrabajadores(int id) throws SQLException{
+    public Trabajador traerTrabajadores(int id, int dias) throws SQLException{
     
-        sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa "+
+        sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
                   "FROM centroverde.asociados A, incentivo.sueldo P "+
                   "WHERE estado = true and A.tipo_presentismo = P.medio and A.id_asociado = " + id;
             ps = conector.prepareStatement(sql);
@@ -54,7 +54,9 @@ public class dbTrabajador extends Conexion{
                         res.getString(9),
                         res.getString(10),
                         res.getInt(11),
-                        res.getInt(12));
+                        res.getInt(12),
+                        dias,
+                        res.getString(13));
             }
             return null;
     
@@ -131,7 +133,7 @@ public class dbTrabajador extends Conexion{
         ps = conector.prepareStatement(sql);
         res = ps.executeQuery();
         while(res.next()){
-            DiaTrabajado dia = new DiaTrabajado(res.getInt(1),res.getInt(2));
+            DiaTrabajado dia = new DiaTrabajado(res.getInt(1),res.getInt(2),fs,fe);
             Thread hilo = new Thread(dia);
             hilo.start();
             hilo.join();
