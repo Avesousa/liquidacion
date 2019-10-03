@@ -3,7 +3,7 @@ package Clases;
 import Conectores.dbFeriados;
 import Conectores.dbPago;
 import Conectores.dbTrabajador;
-import Pagos.Cabal;
+import Pagos.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -69,16 +69,15 @@ public class GeneradorDePago {
             Trabajador t = lista.get(i).trabajador;
             
             if(t.getMetodoCondicional().equals("")){
-                if(!t.getRai().equals("") && t.getRai() != null)
+                if(t.getRai() != null && !t.getRai().equals(""))
                     listaRai.add(lista.get(i));
-                else if(!lista.get(i).trabajador.getCbu().equals("") && lista.get(i).trabajador.getCbu() != null)
+                else if(t.getCbu() != null && !t.getCbu().equals(""))
                     listaCbu.add(lista.get(i));
-                else if(!lista.get(i).trabajador.getCabal().equals("") && lista.get(i).trabajador.getCabal() != null)
+                else if(t.getCabal() != null && !t.getCabal().equals(""))
                     listaCabal.add(lista.get(i));
                 else listaManual.add(lista.get(i));
-                
             }else{
-                switch(lista.get(i).trabajador.getMetodoCondicional()){
+                switch(t.getMetodoCondicional()){
                     case "cabal":
                         listaCabal.add(lista.get(i));
                         break;
@@ -93,19 +92,9 @@ public class GeneradorDePago {
         } 
         Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles));
         cabal.start();
-        crearPagoCbu(listaCbu);
-        crearPagoManual(listaManual);
+        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles));
+        cbu.start();
         
-    }
-    
-    private void crearPagoCbu(List<DiaTrabajado> trabajador){
-        for(int i = 0; i < trabajador.size(); i++)
-            System.out.println("Realizará pago de " + trabajador.get(i).trabajador.getNombre() + " por CBU");
-    }
-    
-    private void crearPagoManual(List<DiaTrabajado> trabajador){
-        for(int i = 0; i < trabajador.size(); i++)
-            System.out.println("Realizará pago de " + trabajador.get(i).trabajador.getNombre() + " por MANUAL");
     }
 }
 

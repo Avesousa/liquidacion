@@ -16,11 +16,13 @@ public class Cabal implements Runnable{
      private String ruta;
      private String lineaCabal = "20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
      private int dias = 0;
+     private String motivo;
 
-    public Cabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles) {
+    public Cabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, String motivo) {
         this.trabajadores = trabajadores;
-        this.ruta = ruta + "/Pago Cabal";
+        this.ruta = ruta;
         this.dias = diasHabiles;
+        this.motivo = motivo;
     }
     
     

@@ -36,13 +36,13 @@ public class Sueldo {
     public static String valorizar(String valor, String como, char vacio){
         char[] respuesta = como.toCharArray();
         if(valor.length() <= como.length())
-            for(int i = respuesta.length; i >= 0; i--){
+            for(int i = respuesta.length-1; i >= 0; i--){
                 try {
                     respuesta[i] = valor.charAt(i);
                 } catch (IndexOutOfBoundsException e) {
                     respuesta[i] = vacio;
                 }
             }
-        return respuesta.toString();
+        return String.valueOf(respuesta);
     }
 }

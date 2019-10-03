@@ -13,10 +13,10 @@ public class CantidadLetra {
     private static final double milD = 1000.0;
 
     public static String dameLetra(double nm){
-        System.out.println(nm);
         String nl = Sueldo.formatear(nm);
         String[] n = nl.split(Pattern.quote("."));
         String letra = "";
+        System.out.println("NUMERO A PARSEAR: " + n[0]);
         long numero = Long.parseLong(n[0]);
         long nBillon = (long)(numero/billonD);
         long nMilMillon = (long)(numero/milMillonD);
@@ -37,7 +37,7 @@ public class CantidadLetra {
                     letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? millones : "");
                     break;
                     case 3:
-                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? mil : "");
+                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? (nt[i] == 1 ? "" : mil) : "");
                     break;
                     case 4:
                     letra = sacarNumero(nt[i],letra,false,false);
@@ -58,7 +58,7 @@ public class CantidadLetra {
                     letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? millones : "");
                     break;
                     case 2:
-                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? mil : "");
+                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? (nt[i] == 1 ? "" : mil) : "");
                     break;
                     case 3:
                     letra = sacarNumero(nt[i],letra,false,false);
@@ -77,7 +77,7 @@ public class CantidadLetra {
                     letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? millones : "");
                     break;
                     case 1:
-                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? mil : "");
+                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? (nt[i] == 1 ? "" : mil) : "");
                     break;
                     case 2:
                     letra = sacarNumero(nt[i],letra,false,false);
@@ -91,10 +91,9 @@ public class CantidadLetra {
         }else if(nMil >= 1){
             System.out.println("ENTRO EN MIL");
             for(int i = 0; i < nt.length; i++){
-                System.out.println(nt[i]);
                 switch(i){
                     case 0:
-                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? mil : "");
+                    letra = sacarNumero(nt[i],letra,true,false) + " " + (nt[i] > 0 ? (nt[i] == 1 ? "" : mil) : "");
                     break;
                     case 1:
                     letra = sacarNumero(nt[i],letra,false,false);
@@ -118,7 +117,7 @@ public class CantidadLetra {
                     break;
                 }
             }
-            System.out.println(letra);
+            
             return letra + " con " + n[1] + "/100";
         }        
     }
@@ -174,8 +173,8 @@ public class CantidadLetra {
             else if(!repite && alto)
                 uno = mil;
             
-            return valor + (n == 1 ? uno : darUnidad(n));
-            
+            String pru = valor + (n == 1 ? uno : darUnidad(n));
+            return pru;
         }
     }
     private static String[] separar(double valor){
@@ -187,17 +186,12 @@ public class CantidadLetra {
     }
     private static int[] separarNumero(long numero){
         
-        System.out.println("SEPARAR NUMERO: " + numero);
         String n = String.valueOf(numero);
-        System.out.println("SEPARAR STRING: " + n);
         int dato = ((Integer.parseInt(separar((double)n.length()/3)[1]) > 0) ? (Integer.parseInt(separar((int)n.length()/3)[0]) + 1) : (int)(n.length()/3));
         int[] valor = new int[dato];
         dato--;
-        System.out.println("DATO: " + dato);
-        System.out.println("VALOR: " + valor.length);
         
         for(int i = n.length()-1; i >= 0; i = i-3){
-            System.out.println("---------* EL FOR: " + i);
             String tema = String.valueOf(n.charAt(i));
             if((i - 1) >= 0){
                 tema = String.valueOf(n.charAt(i-1)) + tema;

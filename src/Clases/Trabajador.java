@@ -28,9 +28,9 @@ public class Trabajador{
     private String division;
     private String cooperativa;
     private int coop;
-    private String cbu;
-    private String cabal;
-    private String rai;
+    private String cbu = "";
+    private String cabal = "";
+    private String rai = "";
     private String genero;
     private String correo;
     private int bolson;
@@ -93,12 +93,12 @@ public class Trabajador{
         this.tipoR = tipo;
         this.funcion = funcion;
         this.ubicacion = ubicacion;
-        this.cbu = cbu;
-        this.cabal = cabal;
+        this.cbu = cbu == null ? "" : cbu;
+        this.cabal = cabal == null ? "" : cabal;
         this.documento = dni;
         this.coop = cooperativa;
         this.diasTrabajados = dias;
-        this.rai = rai;
+        this.rai = rai == null ? "" : rai;
         
     } 
     

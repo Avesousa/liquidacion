@@ -60,12 +60,5 @@ public class dbEtapa extends Conexion{
             }
             
         }
-        
-        
     }
-    
-   
-    
-    
-    
 }
