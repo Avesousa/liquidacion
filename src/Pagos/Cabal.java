@@ -1,6 +1,5 @@
 package Pagos;
 
-import Clases.Cooperativa;
 import Clases.DiaTrabajado;
 import Clases.Trabajador;
 import Conectores.dbCooperativa;
@@ -10,26 +9,15 @@ import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
 
-public class Cabal implements Runnable{
-     private List<DiaTrabajado> trabajadores;
-     private List<Cooperativa> cooperativas;
-     private String ruta;
-     private String lineaCabal = "20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
-     private int dias = 0;
-     private String motivo;
+public class Cabal extends MetodoDePago implements Runnable{
+    private String lineaCabal = "20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
 
     public Cabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, String motivo) {
-        this.trabajadores = trabajadores;
-        this.ruta = ruta;
-        this.dias = diasHabiles;
-        this.motivo = motivo;
+        super(trabajadores,ruta,diasHabiles,motivo);
     }
-    
-    
     //C:CUENTA / I:IMPORTE / A:ASOCIADO / D:DOCUMENTO
-    
     //Métodos para construir Cabal TXT
-    private String crearLineaCabal(String cabal, String asociado, String documento, String monto){
+    private String linea(String cabal, String asociado, String documento, String monto){
         char[] banderaLinea = lineaCabal.toCharArray();
         int doc = documento.length()-1;
         int nom = 0;
@@ -74,7 +62,7 @@ public class Cabal implements Runnable{
         return "\n" + String.valueOf(banderaLinea);
         
     }
-    private String primeraLineaCabal() {
+    private String primeraLinea() {
         String linea = "12018050101052000201687                    34999032089034180                             ";
         char[] banderaLinea = linea.toCharArray();
         
@@ -94,7 +82,7 @@ public class Cabal implements Runnable{
         return String.valueOf(banderaLinea);
         
     }
-    private String ultimaLineaCabal(String cantidad, String monto) {
+    private String ultimaLinea(String cantidad, String monto) {
         String linea = "9CCCCCCCCCMMMMMMMMMMMMMM                                                                 ";
         char[] banderaLinea = linea.toCharArray();
         int cant = cantidad.length() - 1;
@@ -135,17 +123,17 @@ public class Cabal implements Runnable{
                 listado.start();
                 FileWriter fw = new FileWriter(archivo);
                 BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(primeraLineaCabal());
+                bw.write(primeraLinea());
                 for(int i = 0; i < trabajadores.size(); i++){
                     Trabajador t = trabajadores.get(i).trabajador;
-                    bw.write(crearLineaCabal(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias,t.sueldo,dias)))));
+                    bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias,t.sueldo,dias)))));
                     montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
                     cooperativas.get(t.getCoop()-1).add();
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, t.sueldo, dias))));
                 }
-                Thread documento = new Thread(new Documento(cooperativas,ruta,true));
+                Thread documento = new Thread(new Documento(cooperativas,ruta,true,motivo));
                 documento.start();
-                bw.write(ultimaLineaCabal(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
+                bw.write(ultimaLinea(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
                 bw.close();
             }catch(Exception e){
                 e.printStackTrace();

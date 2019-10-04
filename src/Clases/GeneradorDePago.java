@@ -1,14 +1,9 @@
 package Clases;
 
-import Conectores.dbFeriados;
 import Conectores.dbPago;
 import Conectores.dbTrabajador;
 import Pagos.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,9 +85,9 @@ public class GeneradorDePago {
                 }
             }
         } 
-        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles));
+        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles,"Incentivo"));
         cabal.start();
-        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles));
+        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles,"Incentivo"));
         cbu.start();
         
     }

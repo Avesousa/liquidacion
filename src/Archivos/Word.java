@@ -59,6 +59,18 @@ public class Word {
            }              
    }
    
+    public void reemplazar(String[] llaves, String[] valores){
+        for(XWPFParagraph parrafo : d.getParagraphs())
+            for(XWPFRun escrito : parrafo.getRuns()){
+                String texto = escrito.getText(0);
+                for(int i = 0; i < llaves.length; i++)
+                    if(texto != null && texto.contains(llaves[i])){
+                        texto = texto.replace(llaves[i], valores[i]);
+                        escrito.setText(texto,0);
+                }
+           }
+   }
+   
    public void guardarArchivo(String ruta){
        try {
             FileOutputStream archivo = new FileOutputStream(ruta);

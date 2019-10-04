@@ -14,35 +14,38 @@ public class Documento implements Runnable {
     private Word documento;
     private String planilla;
     private String nombreDocumento;
+    private String motivo;
     
-    public Documento(List<Cooperativa> cooperativas, String ruta, boolean cabal){
+    public Documento(List<Cooperativa> cooperativas, String ruta, boolean cabal, String motivo){
         this.cooperativas = cooperativas;
         this.ruta = ruta;
-        this.planilla = cabal ? "plantillaCabal.docx" : "plantillaAhorro.docx";
+        this.planilla = cabal ? "cabal.docx" : "cajaAhorro.docx";
         this.nombreDocumento = cabal ? "/DocumentoCabal " : "/DocumentoCajaDeAhorro ";
+        this.motivo = motivo;
     }
     
     @Override
     public void run() {
         Date fecha = new Date();
-        documento = new Word(this.planilla);
-        List<String> valores = new ArrayList();
+        documento = new Word(planilla);
+        List<String> coope = new ArrayList();
         int num = 1;
         double monto = 0;
         for(Cooperativa cooperativa : cooperativas)
             if(cooperativa.getAsociados() > 0){
-                valores.add(num + "- Cooperativa de " +
+                coope.add(num + "- Cooperativa de " +
                             cooperativa.getRazon()+ " Ltda. de "+
                             cooperativa.getAsociados() + " personas por un monto total de $"+
                             Sueldo.formatear(cooperativa.getMonto())+ "("+CantidadLetra.dameLetra(cooperativa.getMonto())+")");
                 num++;
                 monto += cooperativa.getMonto();
             }
-        documento.reemplazar("#DATOPORCOOPERATIVA#", valores);
-        documento.reemplazar("#MONTOPESOTOTAL#", Sueldo.formatear(monto));
-        documento.reemplazar("#MONTOLETRATOTAL#", CantidadLetra.dameLetra(monto));
-        documento.reemplazar("#FECHA#", fecha.getDate() + " de " + Fecha.MesC(fecha.getMonth()) + " de " + Fecha.Año(fecha.getYear()));
-        documento.reemplazar("#MESANIO#", Fecha.MesC(fecha.getMonth()) + " de " + Fecha.Año(fecha.getYear()));
+        String[] llaves = {"#FECHA#","#MOTIVO#","#MONTOLETRATOTAL#","#MONTOPESOTOTAL#","#MESANIO#"};
+        String[] valores = {fecha.getDate() + " de " + Fecha.MesC(fecha.getMonth()) + " de " + Fecha.Año(fecha.getYear()),
+        motivo,CantidadLetra.dameLetra(monto),Sueldo.formatear(monto),Fecha.MesC(fecha.getMonth()) + " de " + Fecha.Año(fecha.getYear())};
+        
+        documento.reemplazar("#DATOPORCOOPERATIVA#", coope);
+        documento.reemplazar(llaves, valores);
         documento.guardarArchivo(ruta + nombreDocumento + (fecha.getDate()) + "-" + (fecha.getMonth()+1) + ".docx");
     }
     /**/
