@@ -6,10 +6,7 @@ import Pagos.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class GeneradorDePago {
@@ -18,13 +15,20 @@ public class GeneradorDePago {
     
     private String ruta;
     
+    private java.util.Date fechaI;
+    
+    private java.util.Date fechaF;
+    
     public GeneradorDePago(Calendar fechaI, Calendar fechaF, String ruta){
+        this.fechaI = fechaI.getTime();
+        this.fechaF = fechaF.getTime();
         this.ruta = ruta;
         if(new dbPago().verificar(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()))){
             diasHabiles = traerDiasHabiles(fechaI,fechaF);
             try {
-                List<DiaTrabajado> trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()));
-                crearPago(trabajador); 
+                List<FechaDeTrabajo> trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
+                crearPago(trabajador);
+                
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "¡Ha ocurrido un error en la Base de Datos!");
                 ex.printStackTrace();
@@ -55,11 +59,11 @@ public class GeneradorDePago {
     }
     
     
-    private void crearPago(List<DiaTrabajado> lista) {
-        List<DiaTrabajado> listaCbu = new ArrayList();
-        List<DiaTrabajado> listaCabal = new ArrayList();
-        List<DiaTrabajado> listaManual = new ArrayList();
-        List<DiaTrabajado> listaRai = new ArrayList();
+    private void crearPago(List<FechaDeTrabajo> lista) {
+        List<FechaDeTrabajo> listaCbu = new ArrayList();
+        List<FechaDeTrabajo> listaCabal = new ArrayList();
+        List<FechaDeTrabajo> listaManual = new ArrayList();
+        List<FechaDeTrabajo> listaRai = new ArrayList();
         for(int i = 0; i < lista.size(); i++){
             Trabajador t = lista.get(i).trabajador;
             
@@ -85,9 +89,11 @@ public class GeneradorDePago {
                 }
             }
         } 
-        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles,"Incentivo"));
+        
+        int id = new dbPago().crearPago(Fecha.convertir(fechaI),Fecha.convertir(fechaF));
+        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles,"Incentivo",id));
         cabal.start();
-        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles,"Incentivo"));
+        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles,"Incentivo",id));
         cbu.start();
         
     }

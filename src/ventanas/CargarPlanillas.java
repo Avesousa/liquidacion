@@ -107,10 +107,8 @@ public class CargarPlanillas extends javax.swing.JFrame {
         if(option == JFileChooser.APPROVE_OPTION){
             this.ruta.setText("Archivos seleccionados ("+box.getSelectedFiles().length + ")");
             for(File archivo : box.getSelectedFiles()){
-                System.out.println(archivo.getPath());
                 lista.add(archivo.getPath());
             }
-            System.out.println(lista);
             this.btn_subir.setEnabled(true);
         }
     }//GEN-LAST:event_traerArchivos

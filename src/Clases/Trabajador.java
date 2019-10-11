@@ -101,6 +101,23 @@ public class Trabajador{
         this.rai = rai == null ? "" : rai;
         
     } 
+    public Trabajador(int id, long doc, String nom, String apel, String tipo, String funcion, String ubicacion, double monto, String cbu, String cabal, int dni, int cooperativa, String rai){
+        
+        sueldo = monto;
+        this.id = id;
+        this.cuil = doc;
+        this.nombre = nom;
+        this.apellido = apel;
+        this.tipoR = tipo;
+        this.funcion = funcion;
+        this.ubicacion = ubicacion;
+        this.cbu = cbu == null ? "" : cbu;
+        this.cabal = cabal == null ? "" : cabal;
+        this.documento = dni;
+        this.coop = cooperativa;
+        this.rai = rai == null ? "" : rai;
+        
+    } 
     
     
     public List dameDatos(){
@@ -219,10 +236,4 @@ public class Trabajador{
     public String toString() {
         return "Trabajador{" + "sueldo=" + sueldo + ", id=" + id + ", documento=" + documento + ", nombre=" + nombre + ", apellido=" + apellido + ", tipoR=" + tipoR + ", funcion=" + funcion + ", ubicacion=" + ubicacion + ", division=" + division + ", cooperativa=" + cooperativa + ", cbu=" + cbu + ", cabal=" + cabal + ", bolson=" + bolson + ", turno=" + turno + ", cuil=" + cuil + ", fecha=" + fecha + '}';
     }
-
-    
-    
-    
-    
-    
 }

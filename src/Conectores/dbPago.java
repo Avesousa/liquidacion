@@ -3,6 +3,8 @@ package Conectores;
 import Clases.Condiciones;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -60,4 +62,22 @@ public class dbPago extends Conexion{
         
         return valor;
     }
+    
+    public int crearPago(Date fs, Date fe){
+        try {
+            sql = "INSERT INTO incentivo.pago(fecha_inicio,fecha_final) VALUES(?,?)";
+            ps = conector.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setDate(1, fs);
+            ps.setDate(2, fe);
+            ps.executeUpdate();
+            res = ps.getGeneratedKeys();
+            if(res.next())
+                return res.getInt(1);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }    
+    
 }

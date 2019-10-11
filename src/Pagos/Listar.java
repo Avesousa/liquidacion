@@ -1,6 +1,6 @@
 package Pagos;
 
-import Clases.DiaTrabajado;
+import Clases.FechaDeTrabajo;
 import Clases.Trabajador;
 import Archivos.Excel;
 import java.util.ArrayList;
@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.List;
 
 public class Listar implements Runnable {
-    private List<DiaTrabajado> trabajadores;
+    private List<FechaDeTrabajo> trabajadores;
     private String ruta;
     private Excel documento;
     private int dias;
     private boolean esCabal = false;
     private String nombreDocumento;
     
-    public Listar(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, boolean cabal){
+    public Listar(List<FechaDeTrabajo> trabajadores, String ruta, int diasHabiles, boolean cabal){
         this.trabajadores = trabajadores;
         this.ruta = ruta;
         this.dias = diasHabiles;

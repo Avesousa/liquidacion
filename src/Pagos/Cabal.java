@@ -1,6 +1,6 @@
 package Pagos;
 
-import Clases.DiaTrabajado;
+import Clases.FechaDeTrabajo;
 import Clases.Trabajador;
 import Conectores.dbCooperativa;
 import java.io.BufferedWriter;
@@ -12,8 +12,8 @@ import java.util.List;
 public class Cabal extends MetodoDePago implements Runnable{
     private String lineaCabal = "20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
 
-    public Cabal(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, String motivo) {
-        super(trabajadores,ruta,diasHabiles,motivo);
+    public Cabal(List<FechaDeTrabajo> trabajadores, String ruta, int diasHabiles, String motivo, int id) {
+        super(trabajadores,ruta,diasHabiles,motivo,id);
     }
     //C:CUENTA / I:IMPORTE / A:ASOCIADO / D:DOCUMENTO
     //Métodos para construir Cabal TXT
@@ -130,6 +130,7 @@ public class Cabal extends MetodoDePago implements Runnable{
                     montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
                     cooperativas.get(t.getCoop()-1).add();
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, t.sueldo, dias))));
+                    new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CABAL")).start();
                 }
                 Thread documento = new Thread(new Documento(cooperativas,ruta,true,motivo));
                 documento.start();

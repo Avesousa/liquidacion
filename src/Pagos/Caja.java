@@ -1,6 +1,6 @@
 package Pagos;
 
-import Clases.DiaTrabajado;
+import Clases.FechaDeTrabajo;
 import Clases.Trabajador;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,8 +10,8 @@ import java.util.List;
 
 public class Caja extends MetodoDePago implements Runnable{
 
-    public Caja(List<DiaTrabajado> trabajadores, String ruta, int diasHabiles, String motivo) {
-        super(trabajadores, ruta, diasHabiles, motivo);
+    public Caja(List<FechaDeTrabajo> trabajadores, String ruta, int diasHabiles, String motivo, int id) {
+        super(trabajadores, ruta, diasHabiles, motivo, id);
     }
     
     //AAAA = ANIO, MM = MES, DD = DIA --- CCC = CANTIDAD DE REGISTRO --- CCCCCC = CANTIDAD DE REGISTRO EN CASO DE SER MAYOR A 999
@@ -85,6 +85,7 @@ public class Caja extends MetodoDePago implements Runnable{
                     bw.write(linea(t.getCuil(),t.getCbu(),t.montoCobrar(dias),(i+1) == trabajadores.size()));
                     cooperativas.get(t.getCoop()-1).add();
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
+                    new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CAJA AHORRO")).start();
                 }
                 Thread documento = new Thread(new Documento(this.cooperativas,this.ruta,false,this.motivo));
                 documento.start();

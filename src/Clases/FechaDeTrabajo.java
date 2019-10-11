@@ -9,18 +9,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-public class DiaTrabajado implements Runnable {
+public class FechaDeTrabajo implements Runnable {
     
     public int id;
-    public int dias;
+    public int dias = 0;
     public Trabajador trabajador;
     private java.sql.Date fechaInicio;
     private java.sql.Date fechaSalida;
     
 
-    public DiaTrabajado(int id, int dias, java.sql.Date fs, java.sql.Date fe) {
+    public FechaDeTrabajo(int id, int dias, java.sql.Date fs, java.sql.Date fe) {
         this.id = id;
         this.dias = dias;
+        this.fechaInicio = fs;
+        this.fechaSalida = fe;
+    }
+    
+    public FechaDeTrabajo(int id, java.sql.Date fs, java.sql.Date fe) {
+        this.id = id;
         this.fechaInicio = fs;
         this.fechaSalida = fe;
     }
@@ -33,12 +39,11 @@ public class DiaTrabajado implements Runnable {
     @Override
     public void run() {
         try {
-            trabajador = new dbTrabajador().traerTrabajadores(id,dias);
+            trabajador = (dias > 0 ? new dbTrabajador().traerTrabajadores(id,dias) : new dbTrabajador().traerTrabajadores(id));
             Condiciones con = new dbPago().traerCondiciones(id, fechaInicio, fechaSalida);
             trabajador.agregarMontoCondicional(con.getMonto());
             trabajador.setMetodoCondicional(con.getMetodo());
         } catch (SQLException ex) {
-            System.out.println("[DiaTrabajado]- " + ex);
             JOptionPane.showMessageDialog(null, "¡Ha ocurrido un error!");
         }
     }

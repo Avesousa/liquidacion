@@ -60,7 +60,6 @@ public class dbCooperativa extends Conexion{
             try {
                 sql = "INSERT INTO " + va[i] + " ("+ no[i][0] + ", " + no[i][1] + ") "
                       + "VALUES('"+ nombre +"', '" + abreviatura + "')";
-                System.out.println(sql);
                 ps = conector.prepareStatement(sql);
                 ps.executeUpdate();
             } catch (Exception e) {
