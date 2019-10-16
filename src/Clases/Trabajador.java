@@ -176,21 +176,37 @@ public class Trabajador{
     public double montoCobrar(int diasHabiles){
     montoCobrar = Sueldo.hacer(diasTrabajados, sueldo, diasHabiles) + this.montoCondicional;
         return montoCobrar;
+    } 
+    public void colocarTabla(DefaultTableModel tabla, boolean tipo){
+        if(tipo){
+            Object [] lista = new Object[9];
+            lista[0] = id;
+            lista[1] = nombre;
+            lista[2] = apellido;
+            lista[3] = documento;
+            lista[4] = tipoR;
+            lista[5] = cooperativa;
+            lista[6] =  funcion;
+            lista[7] = ubicacion;
+            lista[8] = division;
+            tabla.addRow(lista);
+        } else{
+            Object [] lista = new Object[10];
+            lista[0] = id;
+            lista[1] = nombre;
+            lista[2] = apellido;
+            lista[3] = documento;
+            lista[4] = tipoR;
+            lista[5] = cooperativa;
+            lista[6] = funcion;
+            lista[7] = ubicacion;
+            lista[8] = metodoCondicional.equals("") ? "SIN" : metodoCondicional;
+            lista[9] = montoCondicional > 0 ? metodoCondicional : 0.00;
+            tabla.addRow(lista);
+        }
     }
     
-    public void colocarTabla(DefaultTableModel tabla){
-        Object [] lista = new Object[9];
-                lista[0] = id;
-                lista[1] = nombre;
-                lista[2] = apellido;
-                lista[3] = documento;
-                lista[4] = tipoR;
-                lista[5] = cooperativa;
-                lista[6] =  funcion;
-                lista[7] = ubicacion;
-                lista[8] = division;
-                tabla.addRow(lista);
-    }
+    //Coloca los valores de los input en la 
     public void colocarInput( List<JTextField> inputs,List<JComboBox> select){
         
         inputs.get(0).setText(apellido);

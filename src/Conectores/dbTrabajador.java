@@ -1,18 +1,21 @@
 package Conectores;
 
+import Clases.Condiciones;
 import Clases.FechaDeTrabajo;
-import Clases.Fecha;
 import java.util.*;
 import Clases.Trabajador;
+import hilos.CorrerCondiciones;
+import hilos.HacerBarra;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
+import ventanas.CrearCondiciones;
 
 public class dbTrabajador extends Conexion{
     private List<Trabajador> trabajadores = new ArrayList();
     private List<FechaDeTrabajo> diasTrabajados = new ArrayList();
+    private List<CorrerCondiciones> lasCondiciones = new ArrayList();
     
     public List<Trabajador> traerTrabajadores(String etapa) throws SQLException{
             sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal' "+
@@ -93,7 +96,6 @@ public class dbTrabajador extends Conexion{
         System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
         int valor = 0;
         try {
-            
             sql = "SELECT *, C.abreviatura_cooperativa " +
                   "FROM centroverde.asociados, centroverde.cooperativas C " +
                   "WHERE cooperativa = C.id_cooperativa and medio = 1";
@@ -121,7 +123,7 @@ public class dbTrabajador extends Conexion{
                     res.getString("genero").equals("H")? "MASCULINO" : "FEMENINO",
                     res.getInt("rur"),
                     res.getString("telefono")));
-                trabajadores.get(trabajadores.size()-1).colocarTabla(tabla);
+                trabajadores.get(trabajadores.size()-1).colocarTabla(tabla,true);
             }
             System.out.println(trabajadores);
         } catch (Exception e) {
@@ -129,6 +131,60 @@ public class dbTrabajador extends Conexion{
             System.out.println("[conectores.Trabajador.Recuperadores[: id: " + valor);
         }
     }
+    
+    
+    
+    
+    
+    
+    public void traerRecuperadores(DefaultTableModel tabla, java.sql.Date fechaInicio, java.sql.Date fechaFinal, CrearCondiciones condiciones){
+        System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
+        condiciones.texto_finalizar.setVisible(false);
+        try {
+            sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, "+
+                  "A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', "+
+                  "A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
+                  "FROM centroverde.asociados A, incentivo.sueldo P "+
+                  "WHERE estado = true and A.tipo_presentismo = P.medio";
+            ps = conector.prepareStatement(sql);
+            res = ps.executeQuery();
+            while(res.next()){
+                trabajadores.add(new Trabajador(
+                        res.getInt(1),
+                        res.getLong(2),
+                        res.getString(3),
+                        res.getString(4),
+                        res.getString(5),
+                        res.getString(6),
+                        res.getString(8),
+                        res.getDouble(7),
+                        res.getString(9),
+                        res.getString(10),
+                        res.getInt(11),
+                        res.getInt(12),
+                        res.getString(13)));
+                CorrerCondiciones sinHilo = new CorrerCondiciones(fechaInicio,fechaFinal,trabajadores.get(trabajadores.size()-1),tabla);
+                lasCondiciones.add(sinHilo);
+                Thread hilo = new Thread(sinHilo);
+                hilo.start();
+            }
+            for(int i = 0; lasCondiciones.size() > i; i++){
+                lasCondiciones.get(i).coloca();
+                new Thread(new HacerBarra((int)(((i+1)*100)/lasCondiciones.size()),condiciones.barra)).start();
+                if(((i+1)*100)/lasCondiciones.size() == 100)
+                    condiciones.texto_finalizar.setVisible(true);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
     
     public void traerTipos(JComboBox caja){
         try {

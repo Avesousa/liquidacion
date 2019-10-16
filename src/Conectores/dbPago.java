@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 public class dbPago extends Conexion{
     
+    
     public double traerPago(String medio) throws SQLException{
             double valor = 0;
             sql = "SELECT monto FROM incentivo.sueldo WHERE medio = ?";

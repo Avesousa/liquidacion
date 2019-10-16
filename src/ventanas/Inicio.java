@@ -23,6 +23,7 @@ public class Inicio extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -89,6 +90,13 @@ public class Inicio extends javax.swing.JFrame {
             }
         });
 
+        jButton8.setText("CREAR CONDICIONES");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,7 +123,8 @@ public class Inicio extends javax.swing.JFrame {
                             .addComponent(jButton6)
                             .addComponent(jButton2)
                             .addComponent(jButton3)
-                            .addComponent(jButton7))
+                            .addComponent(jButton7)
+                            .addComponent(jButton8))
                         .addGap(18, 18, 18)
                         .addComponent(logo)
                         .addGap(239, 239, 239))))
@@ -139,7 +148,9 @@ public class Inicio extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton5)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton7)))
+                        .addComponent(jButton7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton8)))
                 .addGap(18, 18, 18)
                 .addComponent(ingreso_usuario, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -192,6 +203,11 @@ public class Inicio extends javax.swing.JFrame {
         crearPago.setVisible(true); 
     }//GEN-LAST:event_jButton7ActionPerformed
 
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        CrearCondiciones crearCondiciones = new CrearCondiciones();
+        crearCondiciones.setVisible(true); 
+    }//GEN-LAST:event_jButton8ActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -235,6 +251,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JLabel logo;
     // End of variables declaration//GEN-END:variables
 }

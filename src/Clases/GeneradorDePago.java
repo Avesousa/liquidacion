@@ -77,14 +77,14 @@ public class GeneradorDePago {
                 else listaManual.add(lista.get(i));
             }else{
                 switch(t.getMetodoCondicional()){
-                    case "cabal":
+                    case "CABAL":
                         listaCabal.add(lista.get(i));
                         break;
-                    case "cbu":
+                    case "CBU":
                         listaCabal.add(lista.get(i));
-                    case "manual":
+                    case "MANUAL":
                         listaManual.add(lista.get(i));
-                    case "rai":
+                    case "RAI":
                         listaRai.add(lista.get(i));
                 }
             }

@@ -1,9 +1,11 @@
 package ventanas;
 
 import Clases.Cooperativa;
+import Clases.Fecha;
 import Clases.Trabajador;
 import Conectores.*;
 import com.toedter.calendar.JDateChooser;
+import hilos.TraerTrabajadores;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
@@ -14,24 +16,19 @@ import javax.swing.table.DefaultTableModel;
 
 public class CrearCondiciones extends javax.swing.JFrame {
 
-    dbProcedencia coProcedencia;
-    dbTrabajador coTrabajadores;
-    List<Cooperativa> cooperativas;
-    List<Trabajador> trabajadores;
+    public dbTrabajador coTrabajadores;
+    public List<Trabajador> trabajadores;
     List<JTextField> inputs = new ArrayList();
     List<JComboBox> select = new ArrayList();
+    public boolean esPrimeraVez = true;
 
     public CrearCondiciones() {
         initComponents();
+        this.texto_finalizar.setVisible(false);
+        this.DateEnd.setDate(new java.util.Date());
+        this.DateStart.setDate(new java.util.Date());
         coTrabajadores = new dbTrabajador();
         traerTrabajadores();
-        p_info.setEnabledAt(1, false);
-        p_info.setEnabledAt(2, false);
-        t_division.setVisible(false);
-        d_division.setVisible(false);
-        t_procedencia.setVisible(false);
-        d_procedencia.setVisible(false);
-        armarInputs();
         this.tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.setLocationRelativeTo(null);
     }
@@ -40,9 +37,22 @@ public class CrearCondiciones extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
         p_tabla = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
+        buscador = new javax.swing.JTextField();
+        DateStart = new com.toedter.calendar.JDateChooser();
+        DateEnd = new com.toedter.calendar.JDateChooser();
+        barra = new javax.swing.JProgressBar();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        texto_finalizar = new javax.swing.JLabel();
+
+        jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -51,14 +61,14 @@ public class CrearCondiciones extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "NOMBRE", "APELLIDO", "DNI", "TIPO", "COOPERATIVA", "FUNCIÓN", "UBICACIÓN"
+                "ID", "NOMBRE", "APELLIDO", "DNI", "TIPO", "COOPERATIVA", "FUNCIÓN", "UBICACIÓN", "MÉTODO", "MONTO"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -69,9 +79,9 @@ public class CrearCondiciones extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                colocarDatos(evt);
+        tabla.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                actualizarDatos(evt);
             }
         });
         p_tabla.setViewportView(tabla);
@@ -95,133 +105,157 @@ public class CrearCondiciones extends javax.swing.JFrame {
             tabla.getColumnModel().getColumn(6).setMaxWidth(300);
             tabla.getColumnModel().getColumn(7).setResizable(false);
             tabla.getColumnModel().getColumn(7).setPreferredWidth(120);
+            tabla.getColumnModel().getColumn(8).setResizable(false);
+            tabla.getColumnModel().getColumn(8).setPreferredWidth(120);
+            tabla.getColumnModel().getColumn(9).setResizable(false);
+            tabla.getColumnModel().getColumn(9).setPreferredWidth(120);
         }
 
-        jTextField1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        buscador.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+
+        DateStart.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                hacerFiltro(evt);
+            }
+        });
+
+        DateEnd.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                hacerFiltro(evt);
+            }
+        });
+
+        barra.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                barraPropertyChange(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 204, 255));
+        jLabel2.setText("Información para agregar:");
+
+        jLabel3.setText("- CABAL");
+
+        jLabel4.setText("- MANUAL");
+
+        jLabel5.setText("- RAI");
+
+        jLabel6.setText("- CBU");
+
+        jLabel7.setText("La información para agregar en método debe ser agregado de está manera");
+
+        texto_finalizar.setText("FINALIZÓ LA CARGA");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jTextField1)
-                    .addComponent(p_tabla, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
-                .addGap(0, 571, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(DateStart, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(DateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 848, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(barra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(texto_finalizar)))
+                        .addGap(47, 47, 47)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buscador, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
+                    .addComponent(DateStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(DateEnd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(barra, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(texto_finalizar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void traerProcedencia(int num) {
-        if (d_cooperativa.getSelectedIndex() > 0) {
-            int coop = cooperativas.get((this.d_cooperativa.getSelectedIndex() - 1)).id;
-            coProcedencia = new dbProcedencia();
-            coProcedencia.traerProcedencias(this.d_procedencia, coop);
-        }
-        this.d_procedencia.setVisible(d_procedencia.getItemCount() > 1 && d_cooperativa.getSelectedIndex() > 0);
-        this.t_procedencia.setVisible(d_procedencia.getItemCount() > 1 && d_cooperativa.getSelectedIndex() > 0);
-        this.d_division.setVisible(false);
-        this.t_division.setVisible(false);
-        if(num >= 0){
-            trabajadores.get(num).colocarProcedencia();
-            traerDivision(num);
-        }
-    }
+    private void hacerFiltro(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_hacerFiltro
+        this.buscador.setText("");
+        if(!esPrimeraVez)
+            this.traerTrabajadores();
+    }//GEN-LAST:event_hacerFiltro
 
-    public void traerDivision(int num) {
-        if (d_procedencia.getSelectedIndex() > 0) {
-            String ubicacion = (String) d_procedencia.getSelectedItem();
-            coProcedencia.traerDivision(d_division, ubicacion);
-        }
-        d_division.setVisible(d_division.getItemCount() > 1 && d_procedencia.getSelectedIndex() > 0);
-        t_division.setVisible(d_division.getItemCount() > 1 && d_procedencia.getSelectedIndex() > 0);
-        if(num >= 0)
-           trabajadores.get(num).colocarDivision();
-    }
+    private void actualizarDatos(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_actualizarDatos
+        // TODO add your handling code here:
+    }//GEN-LAST:event_actualizarDatos
 
-    private void colocarDatos(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_colocarDatos
-        //DefaultTableModel grilla = (DefaultTableModel) this.tabla.getModel();
-        int filaSeleccionada = tabla.getSelectedRow();
-        traerTodo();
-        trabajadores.get(filaSeleccionada).colocarInput(inputs, select);
-        traerProcedencia(filaSeleccionada);
-        this.d_nacimiento.setDate(trabajadores.get(filaSeleccionada).fecha());
-        this.p_info.setEnabledAt(1, true);
-        this.p_info.setEnabledAt(2, true);
-    }//GEN-LAST:event_colocarDatos
+    private void barraPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_barraPropertyChange
+        if(this.barra.getValue() == 100){
+            this.texto_finalizar.setVisible(true);
+        }
+    }//GEN-LAST:event_barraPropertyChange
+
 
     private void traerTrabajadores() {
-        DefaultTableModel tabla = (DefaultTableModel) this.tabla.getModel();
-        coTrabajadores.traerRecuperadores(tabla);
-        trabajadores = coTrabajadores.darListaTrabajadores();
-    }
-
-    private void traerFuncion() {
-        new dbFuncion().traerFuncion(this.d_funciones);
-    }
-
-    private boolean validar(int panel) {
-        switch (panel) {
-            case 1:
-                traerTodo();
-                return !(("").equals(this.d_apellido.getText()) && ("").equals(this.d_nombre.getText()));
-            case 2:
-                return this.d_cooperativa.getSelectedIndex() != 0;
-
-            default:
-                return false;
-        }
-    }
-
-    private void traerTipo() {
-        coTrabajadores.traerTipos(d_tipo);
-    }
-
-    private void traerCooperativa() {
-        dbCooperativa co = new dbCooperativa();
-        co.llamarCooperativas(d_cooperativa);
-        cooperativas = co.coops;
-    }
-
-    private void traerTodo() {
-        traerCooperativa();
-        traerTipo();
-        traerFuncion();
-    }
-
-    private void armarInputs() {
-
-        inputs.add(this.d_apellido);
-        inputs.add(this.d_cabal);
-        inputs.add(this.d_cbu);
-        inputs.add(this.d_cuil);
-        inputs.add(this.d_documento);
-        inputs.add(this.d_email);
-        inputs.add(this.d_nombre);
-        inputs.add(this.d_rur);
-        inputs.add(this.d_telefono);
-        inputs.add(this.d_id);
-        select.add(this.d_cooperativa);
-        select.add(this.d_division);
-        select.add(this.d_funciones);
-        select.add(this.d_genero);
-        select.add(this.d_procedencia);
-        select.add(this.d_tipo);
+        Thread hilo = new Thread(new TraerTrabajadores(this));
+        hilo.start();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField jTextField1;
+    public com.toedter.calendar.JDateChooser DateEnd;
+    public com.toedter.calendar.JDateChooser DateStart;
+    public javax.swing.JProgressBar barra;
+    private javax.swing.JTextField buscador;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane p_tabla;
-    private javax.swing.JTable tabla;
+    public javax.swing.JTable tabla;
+    public javax.swing.JLabel texto_finalizar;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,6 +8,7 @@ import Archivos.Excel;
 import java.util.List;
 import Clases.Trabajador;
 import Conectores.dbCoordinador;
+import hilos.HacerBarra;
 import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -80,8 +81,8 @@ public class Generar implements Runnable{
                                     e.printStackTrace();
                                 }
                             }
+                            new Thread(new HacerBarra(((j+1)*100)/datos.size(),barra));
                             texto.setText("Se está cargando " + coor.etapas.get(etapa).toString() + " " + (j+1) + "/" + datos.size());
-                            barra.setValue(((j+1)*100)/datos.size());
                             deshabilitarCelda(datos.get(j).sueldo,documento.fila,(String)datos.get(j).dameDatos().get(5));
                         }
                         
