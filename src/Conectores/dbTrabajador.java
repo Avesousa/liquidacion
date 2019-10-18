@@ -15,7 +15,7 @@ import ventanas.CrearCondiciones;
 public class dbTrabajador extends Conexion{
     private List<Trabajador> trabajadores = new ArrayList();
     private List<FechaDeTrabajo> diasTrabajados = new ArrayList();
-    private List<CorrerCondiciones> lasCondiciones = new ArrayList();
+    private List<CorrerCondiciones> lasCondiciones;
     
     public List<Trabajador> traerTrabajadores(String etapa) throws SQLException{
             sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal' "+
@@ -140,6 +140,10 @@ public class dbTrabajador extends Conexion{
     public void traerRecuperadores(DefaultTableModel tabla, java.sql.Date fechaInicio, java.sql.Date fechaFinal, CrearCondiciones condiciones){
         System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
         condiciones.texto_finalizar.setVisible(false);
+        DefaultTableModel modelo = (DefaultTableModel)condiciones.tabla.getModel();
+        modelo.setRowCount(0);
+        trabajadores = new ArrayList();
+        lasCondiciones = new ArrayList();
         try {
             sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, "+
                   "A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', "+
@@ -171,8 +175,10 @@ public class dbTrabajador extends Conexion{
             for(int i = 0; lasCondiciones.size() > i; i++){
                 lasCondiciones.get(i).coloca();
                 new Thread(new HacerBarra((int)(((i+1)*100)/lasCondiciones.size()),condiciones.barra)).start();
-                if(((i+1)*100)/lasCondiciones.size() == 100)
-                    condiciones.texto_finalizar.setVisible(true);
+                //if(((i+1)*100)/lasCondiciones.size() == 100)
+                condiciones.texto_finalizar.setText((i+1)+"/"+lasCondiciones.size());
+                condiciones.texto_finalizar.setVisible(true);
+                System.out.println(condiciones.tabla.getRowCount());
             }
         }catch(Exception e){
             e.printStackTrace();

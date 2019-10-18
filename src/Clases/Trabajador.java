@@ -201,7 +201,7 @@ public class Trabajador{
             lista[6] = funcion;
             lista[7] = ubicacion;
             lista[8] = metodoCondicional.equals("") ? "SIN" : metodoCondicional;
-            lista[9] = montoCondicional > 0 ? metodoCondicional : 0.00;
+            lista[9] = montoCondicional > 0 ? montoCondicional : 0.00;
             tabla.addRow(lista);
         }
     }

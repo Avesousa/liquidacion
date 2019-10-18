@@ -6,6 +6,7 @@ import Clases.Trabajador;
 import Conectores.*;
 import com.toedter.calendar.JDateChooser;
 import hilos.TraerTrabajadores;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
@@ -65,10 +66,10 @@ public class CrearCondiciones extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, true, false
+                false, false, false, false, false, false, false, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -87,7 +88,7 @@ public class CrearCondiciones extends javax.swing.JFrame {
         p_tabla.setViewportView(tabla);
         if (tabla.getColumnModel().getColumnCount() > 0) {
             tabla.getColumnModel().getColumn(0).setResizable(false);
-            tabla.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tabla.getColumnModel().getColumn(0).setPreferredWidth(100);
             tabla.getColumnModel().getColumn(1).setMinWidth(150);
             tabla.getColumnModel().getColumn(1).setPreferredWidth(150);
             tabla.getColumnModel().getColumn(1).setMaxWidth(200);
@@ -227,17 +228,39 @@ public class CrearCondiciones extends javax.swing.JFrame {
     }//GEN-LAST:event_hacerFiltro
 
     private void actualizarDatos(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_actualizarDatos
-        // TODO add your handling code here:
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            String metodo = this.tabla.getValueAt(this.tabla.getSelectedRow(),8).toString();
+            String montoString = this.tabla.getValueAt(this.tabla.getSelectedRow(),9).toString();
+            int id = Integer.parseInt(this.tabla.getValueAt(this.tabla.getSelectedRow(),0).toString());
+            double monto = 0;
+            if(metodo.equals("RAI") || metodo.equals("CBU") || metodo.equals("CABAL") || metodo.equals("MANUAL") || metodo.equals("SIN")){
+                try {
+                    monto = Double.parseDouble(montoString);
+                    this.tabla.setValueAt(monto, this.tabla.getSelectedRow(),9);
+                    if(monto > 0 || !metodo.equals("SIN")){
+                        new Thread(new ActualizarDatos(id,monto,metodo,Fecha.convertir(DateStart.getDate()),Fecha.convertir(DateEnd.getDate()),this)).start();
+                        
+                    }
+                } catch (NumberFormatException e) {
+                    this.tabla.setValueAt(0.0, this.tabla.getSelectedRow(),9);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El valor colocado es invalido");
+            }
+            
+            
+        }
+        
     }//GEN-LAST:event_actualizarDatos
 
     private void barraPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_barraPropertyChange
         if(this.barra.getValue() == 100){
-            this.texto_finalizar.setVisible(true);
         }
     }//GEN-LAST:event_barraPropertyChange
 
 
-    private void traerTrabajadores() {
+    public void traerTrabajadores() {
+        trabajadores = null;
         Thread hilo = new Thread(new TraerTrabajadores(this));
         hilo.start();
     }

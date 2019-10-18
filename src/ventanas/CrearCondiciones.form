@@ -137,12 +137,12 @@
                 <Column editable="false" title="FUNCI&#xd3;N" type="java.lang.String"/>
                 <Column editable="false" title="UBICACI&#xd3;N" type="java.lang.String"/>
                 <Column editable="true" title="M&#xc9;TODO" type="java.lang.String"/>
-                <Column editable="false" title="MONTO" type="java.lang.Double"/>
+                <Column editable="true" title="MONTO" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
-                <Column maxWidth="-1" minWidth="-1" prefWidth="50" resizable="false">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="100" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
