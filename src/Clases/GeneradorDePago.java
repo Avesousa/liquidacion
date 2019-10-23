@@ -3,9 +3,11 @@ package Clases;
 import Conectores.dbPago;
 import Conectores.dbTrabajador;
 import Pagos.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -19,11 +21,17 @@ public class GeneradorDePago {
     
     private java.util.Date fechaF;
     
-    public GeneradorDePago(Calendar fechaI, Calendar fechaF, String ruta){
+    private String motivo;
+    
+    public GeneradorDePago(Calendar fechaI, Calendar fechaF, String ruta, String motivo){
         this.fechaI = fechaI.getTime();
         this.fechaF = fechaF.getTime();
-        this.ruta = ruta;
+        Date fechaHoy = new Date();
+        this.motivo = motivo;
+        this.ruta = ruta + "/Pago "+ motivo + (fechaHoy.getDate() > 9 ? fechaHoy.getDate() : '0' + fechaHoy.getDate())+ "-" +(fechaHoy.getMonth()+1);
         if(new dbPago().verificar(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()))){
+            File carpeta = new File(this.ruta);
+            carpeta.mkdirs();
             diasHabiles = traerDiasHabiles(fechaI,fechaF);
             try {
                 List<FechaDeTrabajo> trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
@@ -67,7 +75,7 @@ public class GeneradorDePago {
         for(int i = 0; i < lista.size(); i++){
             Trabajador t = lista.get(i).trabajador;
             
-            if(t.getMetodoCondicional().equals("")){
+            if(t.getMetodoCondicional().equals("") || t.getMetodoCondicional().equals("SIN")){
                 if(t.getRai() != null && !t.getRai().equals(""))
                     listaRai.add(lista.get(i));
                 else if(t.getCbu() != null && !t.getCbu().equals(""))
@@ -82,18 +90,23 @@ public class GeneradorDePago {
                         break;
                     case "CBU":
                         listaCabal.add(lista.get(i));
+                        break;
                     case "MANUAL":
                         listaManual.add(lista.get(i));
+                        System.out.println("ES MANUAL ESTÉ PAGO");
+                        break;
                     case "RAI":
                         listaRai.add(lista.get(i));
+                        System.out.println("ES RAI ESTÉ PAGO");
+                        break;
                 }
             }
         } 
         
         int id = new dbPago().crearPago(Fecha.convertir(fechaI),Fecha.convertir(fechaF));
-        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles,"Incentivo",id));
+        Thread cabal = new Thread(new Cabal(listaCabal,ruta,diasHabiles,motivo,id));
         cabal.start();
-        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles,"Incentivo",id));
+        Thread cbu = new Thread(new Caja(listaCbu,ruta,diasHabiles,motivo,id));
         cbu.start();
         
     }

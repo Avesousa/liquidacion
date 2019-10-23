@@ -11,7 +11,7 @@ import java.util.List;
 public class Caja extends MetodoDePago implements Runnable{
 
     public Caja(List<FechaDeTrabajo> trabajadores, String ruta, int diasHabiles, String motivo, int id) {
-        super(trabajadores, ruta, diasHabiles, motivo, id);
+        super(trabajadores, ruta+"/Caja De Ahorro", diasHabiles, motivo, id);
     }
     
     //AAAA = ANIO, MM = MES, DD = DIA --- CCC = CANTIDAD DE REGISTRO --- CCCCCC = CANTIDAD DE REGISTRO EN CASO DE SER MAYOR A 999
@@ -72,7 +72,9 @@ public class Caja extends MetodoDePago implements Runnable{
         if(!this.ruta.equals("")){
             Date fecha = new Date();
             try {
-                File archivo = new File(ruta + "/PagoCajaAhorro " + fecha.getDate()+ "-" +(fecha.getMonth()+1) + ".txt");
+                File carpeta = new File(ruta);
+                carpeta.mkdirs();
+                File archivo = new File(ruta + "/Formato.txt");
                 if(!archivo.exists())
                     archivo.createNewFile();
                 Thread listado = new Thread(new Listar(trabajadores,ruta,dias,false));
@@ -87,7 +89,7 @@ public class Caja extends MetodoDePago implements Runnable{
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
                     new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CAJA AHORRO")).start();
                 }
-                Thread documento = new Thread(new Documento(this.cooperativas,this.ruta,false,this.motivo));
+                Thread documento = new Thread(new Documento(this.cooperativas,this.ruta,this.motivo,false));
                 documento.start();
                 bw.close();
                         

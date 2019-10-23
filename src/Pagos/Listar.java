@@ -20,7 +20,7 @@ public class Listar implements Runnable {
         this.ruta = ruta;
         this.dias = diasHabiles;
         this.esCabal = cabal;
-        this.nombreDocumento = cabal ? "/ListadoDeCabal " : "/ListadoDeCajaDeAhorro ";
+        this.nombreDocumento = "/Listado";
     }
     
     @Override
@@ -49,16 +49,16 @@ public class Listar implements Runnable {
                     documento.agregarCelda(3, documento.fila).setCellValue(esCabal ? trabajador.getCabal() : trabajador.getCbu());
                     documento.adaptarCelda(3);
                     //IMPORTE
-                    documento.agregarCelda(4, documento.fila).setCellValue(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, trabajador.sueldo, dias)));
+                    documento.agregarCelda(4, documento.fila).setCellValue(Sueldo.formatear(trabajadores.get(i).trabajador.montoCobrar(dias)));
                     documento.adaptarCelda(4);
                     //IMPORTE TOTAL
-                    montoTotal += Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, trabajador.sueldo, dias)));
+                    montoTotal += Double.parseDouble(Sueldo.formatear(trabajadores.get(i).trabajador.montoCobrar(dias)));
                 } catch (Exception e) {
                     System.out.println("ERROR EN LISTADO DE CABA");
                 }
             }
             documento.agregarCelda(4, documento.agregarFila(documento.hoja.getLastRowNum()+1)).setCellValue(Sueldo.formatear(montoTotal));
-            documento.guardarArchivo(ruta+ nombreDocumento + (fecha.getDate()) + "-" + (fecha.getMonth()+1) + ".xlsx");
+            documento.guardarArchivo(ruta+ nombreDocumento + ".xlsx");
             documento = null;
         }
     }

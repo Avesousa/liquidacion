@@ -15,7 +15,7 @@ public class ActualizarDatos extends Conexion implements Runnable{
     private java.sql.Date fe;
     private CrearCondiciones clase;
 
-    public ActualizarDatos(int id, double monto, String metodo, java.sql.Date fs, java.sql.Date fe, CrearCondiciones clase) {
+    public void colocarDatos(int id, double monto, String metodo, java.sql.Date fs, java.sql.Date fe, CrearCondiciones clase) {
         this.id = id;
         this.monto = monto;
         this.metodo = metodo;

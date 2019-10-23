@@ -17,6 +17,7 @@ public class CantidadLetra {
         String[] n = nl.split(Pattern.quote("."));
         String letra = "";
         System.out.println("NUMERO A PARSEAR: " + n[0]);
+        
         long numero = Long.parseLong(n[0]);
         long nBillon = (long)(numero/billonD);
         long nMilMillon = (long)(numero/milMillonD);

@@ -43,9 +43,10 @@ public class dbPago extends Conexion{
     
     public Condiciones traerCondiciones(int id, Date fs, Date fe) throws SQLException{
         Condiciones valor = new Condiciones();
-        
         sql = "SELECT monto, metodo FROM incentivo.condiciones WHERE id_asociado = " + id +
-              " AND fecha_inicio BETWEEN '" + fs + "' AND '" + fe + "'";
+              " AND (fecha_inicio BETWEEN '" + fs + "' AND '" + fe + "'" +
+              " OR fecha_final BETWEEN '" + fs + "' AND '" + fe + "') ORDER BY fecha_final";
+        System.out.println(sql);
         ps = conector.prepareStatement(sql);
         res = ps.executeQuery();
         while(res.next()){

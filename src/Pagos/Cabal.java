@@ -13,7 +13,7 @@ public class Cabal extends MetodoDePago implements Runnable{
     private String lineaCabal = "20CCCCCCCCCCCCCCCIIIIIIIIII AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDD00000               ";
 
     public Cabal(List<FechaDeTrabajo> trabajadores, String ruta, int diasHabiles, String motivo, int id) {
-        super(trabajadores,ruta,diasHabiles,motivo,id);
+        super(trabajadores,ruta+"/Cabal",diasHabiles,motivo,id);
     }
     //C:CUENTA / I:IMPORTE / A:ASOCIADO / D:DOCUMENTO
     //Métodos para construir Cabal TXT
@@ -112,11 +112,13 @@ public class Cabal extends MetodoDePago implements Runnable{
     @Override
     public void run() {
         double montoTotal = 0;
-        if(!this.ruta.equals("")){
+        if(!ruta.equals("")){
             Date fecha = new Date();
             try{ 
+                File carpeta = new File(ruta);
+                carpeta.mkdirs();
                 cooperativas = new dbCooperativa().traerCooperativas();
-                File archivo = new File(ruta + "/PAGOCABAL" + (fecha.getDate() > 9 ? fecha.getDate() : '0' + fecha.getDate())+ "-" +(fecha.getMonth()+1) + ".txt");
+                File archivo = new File(ruta + "/Formato.txt");
                 if(!archivo.exists())
                     archivo.createNewFile();
                 Thread listado = new Thread(new Listar(trabajadores,ruta,dias,true));
@@ -126,13 +128,15 @@ public class Cabal extends MetodoDePago implements Runnable{
                 bw.write(primeraLinea());
                 for(int i = 0; i < trabajadores.size(); i++){
                     Trabajador t = trabajadores.get(i).trabajador;
-                    bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias,t.sueldo,dias)))));
+                    System.out.println("Persona en cabal " + t.getNombre());
+                    bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(t.montoCobrar(dias)))));
                     montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
                     cooperativas.get(t.getCoop()-1).add();
-                    cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(Sueldo.hacer(trabajadores.get(i).dias, t.sueldo, dias))));
+                    cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
                     new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CABAL")).start();
                 }
-                Thread documento = new Thread(new Documento(cooperativas,ruta,true,motivo));
+                System.out.println("Cantidad de trabajadores para cabal: " + trabajadores.size());
+                Thread documento = new Thread(new Documento(cooperativas,ruta,motivo,true));
                 documento.start();
                 bw.write(ultimaLinea(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
                 bw.close();

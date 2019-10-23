@@ -1,6 +1,7 @@
 package Clases;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class CerrarVentana {
     
@@ -10,7 +11,6 @@ public class CerrarVentana {
             casa.setVisible(true);
             if(condicion != null)
                 condicion.stop();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }

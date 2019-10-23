@@ -19,6 +19,7 @@ public class TraerTrabajadores implements Runnable{
     
     public TraerTrabajadores(CrearCondiciones condi){
         this.condi = condi;
+        this.condi.esPrimeraVez = false;
     }
     
     @Override
@@ -28,7 +29,6 @@ public class TraerTrabajadores implements Runnable{
         DefaultTableModel tabla = (DefaultTableModel) condi.tabla.getModel();
         condi.coTrabajadores.traerRecuperadores(tabla, fechaInicial, fechaFinal, condi);
         condi.trabajadores = condi.coTrabajadores.darListaTrabajadores();
-        condi.esPrimeraVez = false;
         
     }
     

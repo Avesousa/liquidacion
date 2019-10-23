@@ -43,6 +43,7 @@ public class FechaDeTrabajo implements Runnable {
             Condiciones con = new dbPago().traerCondiciones(id, fechaInicio, fechaSalida);
             trabajador.agregarMontoCondicional(con.getMonto());
             trabajador.setMetodoCondicional(con.getMetodo());
+            System.out.println(trabajador);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "¡Ha ocurrido un error!");
         }

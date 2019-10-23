@@ -21,6 +21,7 @@ public class CrearPlanilla extends javax.swing.JFrame {
     private JFrame casa;
     public CrearPlanilla(JFrame casa) {
         initComponents();
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.barraProgreso.setVisible(false);
         this.fechaSecundaria.setDate(new Date());
@@ -49,9 +50,13 @@ public class CrearPlanilla extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        CERRAR = new javax.swing.JButton();
 
-        setUndecorated(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         obtener_fecha.setText("Generar Planillas");
         obtener_fecha.addActionListener(new java.awt.event.ActionListener() {
@@ -87,13 +92,6 @@ public class CrearPlanilla extends javax.swing.JFrame {
 
         jLabel4.setText("Mensaje para incluir al correo:");
 
-        CERRAR.setText("CERRAR");
-        CERRAR.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cerrarVentana(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -126,17 +124,11 @@ public class CrearPlanilla extends javax.swing.JFrame {
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                             .addComponent(jLabel4))))
                 .addGap(66, 66, 66))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(CERRAR)
-                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CERRAR)
-                .addGap(12, 12, 12)
+                .addGap(24, 24, 24)
                 .addComponent(barraProgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(textoProgreso)
@@ -156,13 +148,13 @@ public class CrearPlanilla extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(fechaPrimaria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(fechaSecundaria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(74, 74, 74)
+                .addGap(39, 39, 39)
                 .addComponent(obtener_fecha)
-                .addGap(87, 87, 87))
+                .addGap(46, 46, 46))
         );
 
         pack();
@@ -215,12 +207,11 @@ public class CrearPlanilla extends javax.swing.JFrame {
         
     }//GEN-LAST:event_traerRuta
 
-    private void cerrarVentana(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarVentana
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         new CerrarVentana(this,generador,casa);
-    }//GEN-LAST:event_cerrarVentana
+    }//GEN-LAST:event_formWindowClosing
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CERRAR;
     public javax.swing.JProgressBar barraProgreso;
     private javax.swing.JButton boton_ruta;
     public javax.swing.JTextField d_ruta;

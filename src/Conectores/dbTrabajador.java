@@ -15,7 +15,6 @@ import ventanas.CrearCondiciones;
 public class dbTrabajador extends Conexion{
     private List<Trabajador> trabajadores = new ArrayList();
     private List<FechaDeTrabajo> diasTrabajados = new ArrayList();
-    private List<CorrerCondiciones> lasCondiciones;
     
     public List<Trabajador> traerTrabajadores(String etapa) throws SQLException{
             sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal' "+
@@ -36,7 +35,6 @@ public class dbTrabajador extends Conexion{
             }
             return trabajadores;
     }
-    
     public Trabajador traerTrabajadores(int id, int dias) throws SQLException{
     
         sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
@@ -64,10 +62,11 @@ public class dbTrabajador extends Conexion{
             return null;
     
     }
-    
     public Trabajador traerTrabajadores(int id) throws SQLException{
     
-        sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
+        sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, "+
+                  "A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', A.cuenta_cbu, "+
+                  "A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
                   "FROM centroverde.asociados A, incentivo.sueldo P "+
                   "WHERE estado = true and A.tipo_presentismo = P.medio and A.id_asociado = " + id;
             ps = conector.prepareStatement(sql);
@@ -91,7 +90,6 @@ public class dbTrabajador extends Conexion{
             return null;
     
     }
-    
     public void traerRecuperadores(DefaultTableModel tabla){
         System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
         int valor = 0;
@@ -131,19 +129,11 @@ public class dbTrabajador extends Conexion{
             System.out.println("[conectores.Trabajador.Recuperadores[: id: " + valor);
         }
     }
-    
-    
-    
-    
-    
-    
     public void traerRecuperadores(DefaultTableModel tabla, java.sql.Date fechaInicio, java.sql.Date fechaFinal, CrearCondiciones condiciones){
         System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
         condiciones.texto_finalizar.setVisible(false);
-        DefaultTableModel modelo = (DefaultTableModel)condiciones.tabla.getModel();
-        modelo.setRowCount(0);
         trabajadores = new ArrayList();
-        lasCondiciones = new ArrayList();
+        dbPago conexion = new dbPago();
         try {
             sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, "+
                   "A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', "+
@@ -152,6 +142,56 @@ public class dbTrabajador extends Conexion{
                   "WHERE estado = true and A.tipo_presentismo = P.medio";
             ps = conector.prepareStatement(sql);
             res = ps.executeQuery();
+            int cantidad = 0;
+            while(res.next()){
+                trabajadores.add(new Trabajador(
+                        res.getInt(1),
+                        res.getLong(2),
+                        res.getString(3),
+                        res.getString(4),
+                        res.getString(5),
+                        res.getString(6),
+                        res.getString(8),
+                        res.getDouble(7),
+                        res.getString(9),
+                        res.getString(10),
+                        res.getInt(11),
+                        res.getInt(12),
+                        res.getString(13)));
+                CorrerCondiciones condi = new CorrerCondiciones(fechaInicio,fechaFinal,trabajadores.get(trabajadores.size()-1),tabla,conexion);
+                condi.acoplarCondiciones();
+                cantidad++;
+                condiciones.texto_finalizar.setText("Se han cargado " + cantidad + " de recuperadores...");
+                condiciones.texto_finalizar.setVisible(true);
+            }
+            condiciones.texto_finalizar.setText("Ha finalizado la carga... ");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
+    
+    
+    
+    /*public void traerRecuperadores(DefaultTableModel tabla, java.sql.Date fechaInicio, java.sql.Date fechaFinal, CrearCondiciones condiciones){
+        System.out.println("[conectores.Trabajador.traerRecuperadores]: ¡Ha comenzado a correr!");
+        condiciones.texto_finalizar.setVisible(false);
+        DefaultTableModel modelo = (DefaultTableModel)condiciones.tabla.getModel();
+        modelo.setRowCount(0);
+        trabajadores = new ArrayList();
+        lasCondiciones = new ArrayList();
+        hiloCondiciones = new ArrayList();
+        try {
+            sql = "SELECT A.id_asociado, A.cuil, A.nombre, A.apellido, A.tipo_presentismo, "+
+                  "A.funcion, P.monto, concat_ws(' ',ubicacion,division) AS 'ubicacionfinal', "+
+                  "A.cuenta_cbu, A.cuenta_cabal, A.documento, A.cooperativa, A.rai "+
+                  "FROM centroverde.asociados A, incentivo.sueldo P "+
+                  "WHERE estado = true and A.tipo_presentismo = P.medio";
+            ps = conector.prepareStatement(sql);
+            res = ps.executeQuery();
+            int i = 0;
             while(res.next()){
                 trabajadores.add(new Trabajador(
                         res.getInt(1),
@@ -168,29 +208,18 @@ public class dbTrabajador extends Conexion{
                         res.getInt(12),
                         res.getString(13)));
                 CorrerCondiciones sinHilo = new CorrerCondiciones(fechaInicio,fechaFinal,trabajadores.get(trabajadores.size()-1),tabla);
-                lasCondiciones.add(sinHilo);
                 Thread hilo = new Thread(sinHilo);
                 hilo.start();
-            }
-            for(int i = 0; lasCondiciones.size() > i; i++){
-                lasCondiciones.get(i).coloca();
-                new Thread(new HacerBarra((int)(((i+1)*100)/lasCondiciones.size()),condiciones.barra)).start();
-                //if(((i+1)*100)/lasCondiciones.size() == 100)
-                condiciones.texto_finalizar.setText((i+1)+"/"+lasCondiciones.size());
+                condiciones.texto_finalizar.setText("Se está cargando " + (i+1) + "...");
                 condiciones.texto_finalizar.setVisible(true);
-                System.out.println(condiciones.tabla.getRowCount());
+                hilo.join();
+                sinHilo.coloca();
+                i++;
             }
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
-    
-    
-    
-    
-    
-    
-    
+    }*/
     
     public void traerTipos(JComboBox caja){
         try {
@@ -218,7 +247,6 @@ public class dbTrabajador extends Conexion{
                 "FROM presentismo_db.assistance A, presentismo_db.user U " +
                 "WHERE U.id = A.employee AND A.date BETWEEN '"+fs+"' AND '"+fe+"' " +
                 "GROUP BY U.custom_id;";
-        System.out.println(sql);
         ps = conector.prepareStatement(sql);
         res = ps.executeQuery();
         while(res.next()){

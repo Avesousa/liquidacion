@@ -13,7 +13,7 @@ public class Trabajador{
     public double sueldo;
     public String tipo;
     private double montoCondicional = 0;
-    private String metodoCondicional = "";
+    private String metodoCondicional = "SIN";
     private double montoCobrar;
     public int diasTrabajados;
     
@@ -171,11 +171,10 @@ public class Trabajador{
         metodoCondicional = metodo;
     } 
     public void agregarMontoCondicional(double monto){
-        montoCondicional += monto;
+        montoCondicional = monto;
     }
     public double montoCobrar(int diasHabiles){
-    montoCobrar = Sueldo.hacer(diasTrabajados, sueldo, diasHabiles) + this.montoCondicional;
-        return montoCobrar;
+        return Sueldo.hacer(diasTrabajados, sueldo, diasHabiles) + this.montoCondicional;
     } 
     public void colocarTabla(DefaultTableModel tabla, boolean tipo){
         if(tipo){
@@ -247,9 +246,11 @@ public class Trabajador{
                 return i;
         return 0;
     }
-    
+
     @Override
     public String toString() {
-        return "Trabajador{" + "sueldo=" + sueldo + ", id=" + id + ", documento=" + documento + ", nombre=" + nombre + ", apellido=" + apellido + ", tipoR=" + tipoR + ", funcion=" + funcion + ", ubicacion=" + ubicacion + ", division=" + division + ", cooperativa=" + cooperativa + ", cbu=" + cbu + ", cabal=" + cabal + ", bolson=" + bolson + ", turno=" + turno + ", cuil=" + cuil + ", fecha=" + fecha + '}';
+        return "Trabajador{" + "montoCondicional=" + montoCondicional + ", metodoCondicional=" + metodoCondicional + ", montoCobrar=" + montoCobrar + ", diasTrabajados=" + diasTrabajados + ", id=" + id + ", documento=" + documento + ", apellido=" + apellido +", nombre=" + nombre + ", funcion=" + funcion + '}';
     }
+    
+    
 }

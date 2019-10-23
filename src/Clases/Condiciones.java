@@ -6,7 +6,7 @@ public class Condiciones {
     private String metodo = "";
     
     public void agregarMonto(double monto){
-        this.monto += monto;
+        this.monto = monto;
     }
     
     public void agregarMetodo(String metodo){

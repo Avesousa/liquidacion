@@ -16,11 +16,11 @@ public class Documento implements Runnable {
     private String nombreDocumento;
     private String motivo;
     
-    public Documento(List<Cooperativa> cooperativas, String ruta, boolean cabal, String motivo){
+    public Documento(List<Cooperativa> cooperativas, String ruta, String motivo, boolean cabal){
         this.cooperativas = cooperativas;
         this.ruta = ruta;
         this.planilla = cabal ? "cabal.docx" : "cajaAhorro.docx";
-        this.nombreDocumento = cabal ? "/DocumentoCabal " : "/DocumentoCajaDeAhorro ";
+        this.nombreDocumento = "/Nota";
         this.motivo = motivo;
     }
     
@@ -46,7 +46,7 @@ public class Documento implements Runnable {
         
         documento.reemplazar("#DATOPORCOOPERATIVA#", coope);
         documento.reemplazar(llaves, valores);
-        documento.guardarArchivo(ruta + nombreDocumento + (fecha.getDate()) + "-" + (fecha.getMonth()+1) + ".docx");
+        documento.guardarArchivo(ruta + nombreDocumento + ".docx");
     }
     /**/
 }

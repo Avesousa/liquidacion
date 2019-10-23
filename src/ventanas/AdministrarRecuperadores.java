@@ -3,6 +3,7 @@ package ventanas;
 import Clases.Cooperativa;
 import Clases.Trabajador;
 import Conectores.*;
+import Metodos.Hacer;
 import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,8 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
         tabla = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        buscador = new javax.swing.JTextField();
+        logo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -461,13 +464,27 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
 
         jButton2.setText("ACTUALIZAR");
 
+        buscador.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        buscador.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                buscadorbuscar(evt);
+            }
+        });
+
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/search.png"))); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 779, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 779, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(logo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 738, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -484,13 +501,20 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(p_tabla, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(p_info, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
-                            .addComponent(jButton2))))
+                            .addComponent(jButton2)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(logo))
+                            .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(p_tabla)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
@@ -578,6 +602,11 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
         this.p_info.setEnabledAt(2, true);
     }//GEN-LAST:event_colocarDatos
 
+    private void buscadorbuscar(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscadorbuscar
+        buscador.setText(buscador.getText().toUpperCase());
+        new Hacer().filtro(buscador.getText().toUpperCase(), tabla);
+    }//GEN-LAST:event_buscadorbuscar
+
     private void traerTrabajadores() {
         DefaultTableModel tabla = (DefaultTableModel) this.tabla.getModel();
         coTrabajadores.traerRecuperadores(tabla);
@@ -641,6 +670,7 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
     private javax.swing.JButton b_pag_agregar;
     private javax.swing.JButton b_per_sig;
     private javax.swing.JButton b_trab_sig;
+    private javax.swing.JTextField buscador;
     private javax.swing.JTextField d_apellido;
     private javax.swing.JTextField d_cabal;
     private javax.swing.JTextField d_cbu;
@@ -676,6 +706,7 @@ public class AdministrarRecuperadores extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JButton limpiador;
+    private javax.swing.JLabel logo;
     private javax.swing.JTabbedPane p_info;
     private javax.swing.JPanel p_pagos;
     private javax.swing.JPanel p_personal;
