@@ -242,11 +242,16 @@ public class dbTrabajador extends Conexion{
         return this.trabajadores;
     }
     
-    public List<FechaDeTrabajo> traerDiasTrabajados(java.sql.Date fs, java.sql.Date fe, boolean conDias) throws SQLException, InterruptedException{
-        sql =   "SELECT U.custom_id , COUNT(A.date) " +
+    public List<FechaDeTrabajo> traerDiasTrabajados(java.sql.Date fs, java.sql.Date fe, boolean conDias, boolean reclamo) throws SQLException, InterruptedException{
+        sql =   !reclamo ? 
+                "SELECT U.custom_id , COUNT(A.date) " +
                 "FROM presentismo_db.assistance A, presentismo_db.user U " +
                 "WHERE U.id = A.employee AND A.date BETWEEN '"+fs+"' AND '"+fe+"' " +
-                "GROUP BY U.custom_id;";
+                "GROUP BY U.custom_id;" :
+                "SELECT U.custom_id, COUNT(A.fecha) " +
+                "FROM presentismo_db.user U, incentivo.reclamo A " +
+                "WHERE U.id = A.asociado AND A.estado = 0 AND A.reclamo <> 'sancion' " + 
+                "GROUP BY U.custom_id";
         ps = conector.prepareStatement(sql);
         res = ps.executeQuery();
         while(res.next()){

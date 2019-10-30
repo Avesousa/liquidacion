@@ -84,7 +84,7 @@ public class CrearPago extends javax.swing.JFrame {
             }
         });
 
-        motivo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Incentivo", "Reclamo", "Productividad" }));
+        motivo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Incentivo", "Reclamos", "Productividad" }));
 
         jLabel5.setText("PAGO DE:");
 

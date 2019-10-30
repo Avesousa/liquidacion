@@ -9,6 +9,7 @@ import java.util.List;
 import Clases.Trabajador;
 import Conectores.dbCoordinador;
 import hilos.HacerBarra;
+import java.io.File;
 import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -53,8 +54,11 @@ public class Generar implements Runnable{
 
     @Override
     public void run(){
-        barra.setVisible(true);
+        //barra.setVisible(true);
         //barraMail.setVisible(true);
+        File carpeta = new File(ruta + "Planilla de " + ob.tipo.getSelectedItem().toString());
+        ruta = ruta + "Planilla de " + ob.tipo.getSelectedItem().toString() + "/";
+        carpeta.mkdirs();
         
         for(int i = 0; i < coordinadores.size(); i++){
             Coordinador coor = coordinadores.get(i);
@@ -199,6 +203,9 @@ public class Generar implements Runnable{
                 "\"HAY UN ERROR\")");
         else
             documento.celda.setCellValue(sueldo);
+        
+        documento.celda = fila.createCell(dias+3);
+        documento.celda.setCellValue(" ");
         //documento.formulaEvaluador();
 
     }

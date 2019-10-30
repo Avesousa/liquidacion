@@ -22,7 +22,9 @@ public class dbPresente extends Conexion implements Runnable {
     private String[] sancionado = {"",""};
     private String[] certificado = {"",""};
     private String reclamo;
+    private String usuario;
     private String type;
+    private int days = 0;
     
     private void actualizar(){
         this.certificado[0] =   "SELECT id FROM presentismo_db.certificate WHERE employee = (SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+") AND date = '" + date + "' AND status = 'APPROVED'";
@@ -39,12 +41,14 @@ public class dbPresente extends Conexion implements Runnable {
                             "VALUES('"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+")"+
                             ","+user+",'PLANILLA',"+primaryKey+")";
         this.reclamo = "INSERT INTO incentivo.reclamo VALUES(NULL,NULL,'"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+"),'"+type+"','"+user+"','"+tipo+"')";
+        this.usuario = "SELECT id FROM presentismo_db.user WHERE custom_id = "+employee;
     }
-    public void datos(Date date, int employee, int user, String tipo){
+    public void datos(Date date, int employee, int user, String tipo, int days){
         this.date = date;
         this.employee = employee;
         this.user = user;
         this.type = tipo;
+        this.days = days;
     }
     public void definir(String tipo){
         this.tipo = tipo;
@@ -78,7 +82,7 @@ public class dbPresente extends Conexion implements Runnable {
             }
             area.append("[" + tipo + "]: Se ha generado correctamente del id " + employee + " para el día " + date + "\n");
         } catch (SQLIntegrityConstraintViolationException vi){
-            area.append("ERROR - asociado: " + employee + " - "+tipo+": No está definido el asociado\n");
+            area.append("ERROR - asociado: " + employee + " - "+tipo+": No está definido el asociado y lo\n");
             try{
                 new dbError(date,employee,"Error en: " + tipo,"El asociado no está definido en base de datos", user, type);
             } catch (SQLException ex) {
@@ -108,16 +112,7 @@ public class dbPresente extends Conexion implements Runnable {
             
     }
     private boolean verificar() throws SQLException{
-        //!ver(asistio[0]) && !ver(sancionado[0]) && !ver(certificado[0]); 
-        boolean va = !ver(asistio[0]);
-        boolean vs = !ver(sancionado[0]);
-        boolean vc = !ver(certificado[0]); 
-        boolean vt = (va && vs && vc);
-        System.out.println("*********ASISTENCIA********** - " + va);
-        System.out.println("*********SANCIONADO********** - " + vs);
-        System.out.println("*********CERTIFICADO********** - " + vc);
-        System.out.println("*********TODO ES********** - " + vt);
-        return vt;
+        return !ver(asistio[0]) && !ver(sancionado[0]) && !ver(certificado[0]); 
     }
     private boolean ver(String sql) throws SQLException{
         ps = conector.prepareStatement(sql);
@@ -133,10 +128,14 @@ public class dbPresente extends Conexion implements Runnable {
     public void run() {
         try {
             actualizar();
-            if(verificar())
-                hacer();
-            else
-                new dbError(date,employee,"Tiene registrado una fecha","El asociado ya tiene un registro en está fecha", user, type);
+            if(ver(this.usuario)){
+                if(verificar())
+                    hacer();
+                else
+                    new dbError(date,employee,"Tiene registrado una fecha","El asociado ya tiene un registro en está fecha", user, type);
+            }else 
+                area.append("ERROR - asociado: " + employee + " - "+tipo+": No está definido el asociado y lo\n");
+                
         } catch (Exception e) {
             area.append("Error en hacer: " + e + "\n");
         }

@@ -3,7 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/20956852766/Desktop/LIQ/liquidacion/src/ventanas/CrearCondiciones.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Clases/FechaDeTrabajo.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/ventanas/CrearPago.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Pagos/Cabal.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Conectores/dbTrabajador.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Clases/Trabajador.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Conectores/dbPresente.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/Clases/GeneradorDePago.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/ventanas/CargarPlanillas.java</file>
+            <file>file:/C:/Users/20956852766/Desktop/DGREC/JAVA/Liquidacion/src/liquidacion/Cargar.java</file>
         </group>
     </open-files>
 </project-private>

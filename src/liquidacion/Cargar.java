@@ -117,7 +117,7 @@ public class Cargar extends Thread {
         java.sql.Date fecha = new java.sql.Date(anio,mes-1,dia);
         dbPresente co = new dbPresente();
         co.agregarAreaDeTexto(respuesta);
-        co.datos(fecha,id,user,tipo);
+        co.datos(fecha,id,user,tipo,(int)dias);
         switch((int)valor){
             case(1):
                 co.definir("asistencia");

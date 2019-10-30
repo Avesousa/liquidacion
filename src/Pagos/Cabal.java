@@ -112,39 +112,38 @@ public class Cabal extends MetodoDePago implements Runnable{
     @Override
     public void run() {
         double montoTotal = 0;
-        if(!ruta.equals("")){
-            Date fecha = new Date();
-            try{ 
-                File carpeta = new File(ruta);
-                carpeta.mkdirs();
-                cooperativas = new dbCooperativa().traerCooperativas();
-                File archivo = new File(ruta + "/Formato.txt");
-                if(!archivo.exists())
-                    archivo.createNewFile();
-                Thread listado = new Thread(new Listar(trabajadores,ruta,dias,true));
-                listado.start();
-                FileWriter fw = new FileWriter(archivo);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(primeraLinea());
-                for(int i = 0; i < trabajadores.size(); i++){
-                    Trabajador t = trabajadores.get(i).trabajador;
-                    System.out.println("Persona en cabal " + t.getNombre());
-                    bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(t.montoCobrar(dias)))));
-                    System.out.println(t.montoCobrar(dias));
-                    montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
-                    cooperativas.get(t.getCoop()-1).add();
-                    cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
-                    new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CABAL")).start();
+        if(trabajadores.size() > 0)
+            if(!ruta.equals("")){
+                try{ 
+                    File carpeta = new File(ruta);
+                    carpeta.mkdirs();
+                    cooperativas = new dbCooperativa().traerCooperativas();
+                    File archivo = new File(ruta + "/Formato.txt");
+                    if(!archivo.exists())
+                        archivo.createNewFile();
+                    Thread listado = new Thread(new Listar(trabajadores,ruta,dias,true));
+                    listado.start();
+                    FileWriter fw = new FileWriter(archivo);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write(primeraLinea());
+                    for(int i = 0; i < trabajadores.size(); i++){
+                        Trabajador t = trabajadores.get(i).trabajador;
+                        System.out.println("Persona en cabal " + t.getNombre());
+                        bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(t.montoCobrar(dias)))));
+                        System.out.println(t.montoCobrar(dias));
+                        montoTotal += (t.montoCobrar(dias));
+                        cooperativas.get(t.getCoop()-1).add();
+                        cooperativas.get(t.getCoop()-1).addMonto(t.montoCobrar(dias));
+                        new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CABAL")).start();
+                    }
+                    Thread documento = new Thread(new Documento(cooperativas,ruta,motivo,true));
+                    documento.start();
+                    bw.write(ultimaLinea(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
+                    bw.close();
+                }catch(Exception e){
+                    e.printStackTrace();
                 }
-                System.out.println("Cantidad de trabajadores para cabal: " + trabajadores.size());
-                Thread documento = new Thread(new Documento(cooperativas,ruta,motivo,true));
-                documento.start();
-                bw.write(ultimaLinea(String.valueOf(trabajadores.size()),Sueldo.generar(Sueldo.formatear(montoTotal))));
-                bw.close();
-            }catch(Exception e){
-                e.printStackTrace();
             }
-        }
     }
      
      

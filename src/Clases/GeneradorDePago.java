@@ -34,7 +34,11 @@ public class GeneradorDePago {
             carpeta.mkdirs();
             diasHabiles = traerDiasHabiles(fechaI,fechaF);
             try {
-                List<FechaDeTrabajo> trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
+                List<FechaDeTrabajo> trabajador;
+                if(this.motivo.equals("Incentivo"))
+                    trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
+                else //if(this.motivo.equals("Reclamos"))
+                    trabajador = new dbTrabajador().traerDiasReclamados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
                 crearPago(trabajador);
                 
             } catch (SQLException ex) {
@@ -93,11 +97,9 @@ public class GeneradorDePago {
                         break;
                     case "MANUAL":
                         listaManual.add(lista.get(i));
-                        System.out.println("ES MANUAL ESTÉ PAGO");
                         break;
                     case "RAI":
                         listaRai.add(lista.get(i));
-                        System.out.println("ES RAI ESTÉ PAGO");
                         break;
                 }
             }

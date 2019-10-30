@@ -1,7 +1,7 @@
 package Clases;
 
+import Conectores.dbPago;
 import Pagos.Sueldo;
-import com.toedter.calendar.JDateChooser;
 import java.util.*;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -16,6 +16,8 @@ public class Trabajador{
     private String metodoCondicional = "SIN";
     private double montoCobrar;
     public int diasTrabajados;
+    private boolean montoCambiado = false;
+    private String motivo;
     
     //Datos de las personas
     private int id;
@@ -119,7 +121,6 @@ public class Trabajador{
         
     } 
     
-    
     public List dameDatos(){
         return informacion;
     }
@@ -166,7 +167,6 @@ public class Trabajador{
     }
     
     //Insertación de información
-    
     public void setMetodoCondicional(String metodo){
         metodoCondicional = metodo;
     } 
@@ -174,6 +174,9 @@ public class Trabajador{
         montoCondicional = monto;
     }
     public double montoCobrar(int diasHabiles){
+        if(!montoCambiado)
+            new dbPago().actualizarCondicion(id);
+        montoCambiado = true;
         return Sueldo.hacer(diasTrabajados, sueldo, diasHabiles) + this.montoCondicional;
     } 
     public void colocarTabla(DefaultTableModel tabla, boolean tipo){
@@ -204,7 +207,9 @@ public class Trabajador{
             tabla.addRow(lista);
         }
     }
-    
+    public void setMotivo(String motivo){
+        this.motivo = motivo;
+    }
     //Coloca los valores de los input en la 
     public void colocarInput( List<JTextField> inputs,List<JComboBox> select){
         

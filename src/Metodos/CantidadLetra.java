@@ -188,19 +188,24 @@ public class CantidadLetra {
     private static int[] separarNumero(long numero){
         
         String n = String.valueOf(numero);
+        System.out.println("********* SEPARAR NUMERO EL NUMERO ********* " + n);
         int dato = ((Integer.parseInt(separar((double)n.length()/3)[1]) > 0) ? (Integer.parseInt(separar((int)n.length()/3)[0]) + 1) : (int)(n.length()/3));
         int[] valor = new int[dato];
         dato--;
+        System.out.println("///////// DATO ///////// " + dato + "--" + n);
         
         for(int i = n.length()-1; i >= 0; i = i-3){
             String tema = String.valueOf(n.charAt(i));
+            System.out.println("///////// EL TEMA ///////// " + tema + "--" + n);
             if((i - 1) >= 0){
                 tema = String.valueOf(n.charAt(i-1)) + tema;
                 if((i - 2) >= 0)
                     tema = String.valueOf(n.charAt(i-2)) + tema;
             }
+            System.out.println("///////// EL TEMA ///////// " + tema + "--" + n);
             valor[dato] = Integer.parseInt(tema);
             dato--;
+            System.out.println("///////// DATO ///////// " + dato + "--" + n);
         }
         
         return valor;

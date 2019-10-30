@@ -69,34 +69,35 @@ public class Caja extends MetodoDePago implements Runnable{
     
     @Override
     public void run() {
-        if(!this.ruta.equals("")){
-            Date fecha = new Date();
-            try {
-                File carpeta = new File(ruta);
-                carpeta.mkdirs();
-                File archivo = new File(ruta + "/Formato.txt");
-                if(!archivo.exists())
-                    archivo.createNewFile();
-                Thread listado = new Thread(new Listar(trabajadores,ruta,dias,false));
-                listado.start();
-                FileWriter fw = new FileWriter(archivo);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(primeraLinea());
-                for(int i = 0; i < trabajadores.size(); i++){
-                    Trabajador t = trabajadores.get(i).trabajador;
-                    bw.write(linea(t.getCuil(),t.getCbu(),t.montoCobrar(dias),(i+1) == trabajadores.size()));
-                    cooperativas.get(t.getCoop()-1).add();
-                    cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
-                    new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CAJA AHORRO")).start();
+        if(trabajadores.size() > 0)
+            if(!this.ruta.equals("")){
+                Date fecha = new Date();
+                try {
+                    File carpeta = new File(ruta);
+                    carpeta.mkdirs();
+                    File archivo = new File(ruta + "/Formato.txt");
+                    if(!archivo.exists())
+                        archivo.createNewFile();
+                    Thread listado = new Thread(new Listar(trabajadores,ruta,dias,false));
+                    listado.start();
+                    FileWriter fw = new FileWriter(archivo);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write(primeraLinea());
+                    for(int i = 0; i < trabajadores.size(); i++){
+                        Trabajador t = trabajadores.get(i).trabajador;
+                        bw.write(linea(t.getCuil(),t.getCbu(),t.montoCobrar(dias),(i+1) == trabajadores.size()));
+                        cooperativas.get(t.getCoop()-1).add();
+                        cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));
+                        new Thread(new FinalizarPago(idPago,t.getId(),motivo,t.getUbicacion(),t.montoCobrar(dias),"CAJA AHORRO")).start();
+                    }
+                    Thread documento = new Thread(new Documento(this.cooperativas,this.ruta,this.motivo,false));
+                    documento.start();
+                    bw.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                Thread documento = new Thread(new Documento(this.cooperativas,this.ruta,this.motivo,false));
-                documento.start();
-                bw.close();
-                        
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
     }
     
 }

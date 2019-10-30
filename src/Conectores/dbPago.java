@@ -82,4 +82,15 @@ public class dbPago extends Conexion{
         return 0;
     }    
     
+    public void actualizarCondicion(int id){
+        sql = "UPDATE incentivo.condiciones SET monto = 0 WHERE id_asociado = ?";
+        try {
+            ps = conector.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "¡Ha generado un error en actualización de montos en condiciones!");
+        }
+        
+    }    
 }
