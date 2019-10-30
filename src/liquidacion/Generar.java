@@ -36,7 +36,7 @@ public class Generar implements Runnable{
     public Generar(String rutaR,String nombreHoja, List<DiasMesAnio> diasTrabajados, CrearPlanilla ob){
         super();
         ruta = rutaR;
-        nombre = nombreHoja+".xlsx";
+        nombre = nombreHoja;
         fecha = nombreHoja;
         this.diasTrabajados = diasTrabajados;
         this.ob = ob;
@@ -65,14 +65,14 @@ public class Generar implements Runnable{
                     System.out.println("++++ " + coor.etapas.get(etapa).etapa + " ++++");
                     datos = coor.etapas.get(etapa).dameTrabajadores();
                     if(datos.size() > 0){
-                        coor.etapas.get(etapa).agregarRuta(ruta + coor.etapas.get(etapa).etapa + " " + coor.getCoordinador() + " " + nombre);
-                        coor.etapas.get(etapa).agregarNombre(coor.etapas.get(etapa).etapa + " " + nombre);
+                        coor.etapas.get(etapa).agregarNombre(coor.etapas.get(etapa).etapa + " " + coor.getCoordinador() + " " + nombre + " - " + ob.tipo.getSelectedItem().toString()+".xlsx");
+                        coor.etapas.get(etapa).agregarRuta(ruta);
                         documento = new Excel("plantillaPresentismo.xlsx"); // El libro que trae la plantilla.
                         documento.traerHoja(0); //La hoja correspondiente a la plantilla.
                         documento.proteger("dgrecpassword"); //Protección de hoja.
                         agregarCabecera();
                         for(int j = 0; j < datos.size(); j++){
-                            documento.fila = documento.hoja.createRow(6+j);
+                            documento.fila = documento.hoja.createRow(7+j);
                             for(int h = 0; h < datos.get(j).dameDatos().size();h++){
                                 try {
                                     documento.agregarCelda(h, documento.fila).setCellValue(datos.get(j).dameDatos().get(h).toString());
@@ -95,7 +95,7 @@ public class Generar implements Runnable{
                     Correo correo = new Correo("avesousapersonal@gmail.com", "26390042");
                     try {
                         correo.Conectar(coor.getCorreo(), 
-                                "Planillas de " + coor.getCoordinador() + ": " + fecha,
+                                "Planillas de " + ob.tipo.getSelectedItem().toString() + " de "+ coor.getCoordinador() + ": " + fecha,
                                 coor.etapas,
                                 textoMail+
                                 "\nFecha: " + fecha,
@@ -121,18 +121,19 @@ public class Generar implements Runnable{
         documento.fila.getCell(3).setCellValue(datos.size());
         documento.fila = documento.hoja.getRow(3);
         documento.fila.getCell(3).setCellValue(diasTrabajados.size());
+        documento.fila = documento.hoja.getRow(4);
+        documento.fila.getCell(3).setCellValue(ob.tipo.getSelectedItem().toString());
         for(int i = 0; i < (diasTrabajados.size()); i++){
             documento.agregarCelda(i+7,documento.fila).setCellValue(diasTrabajados.get(i).mesEnt);
             documento.bloquear(true);
         }
-        documento.fila = documento.hoja.getRow(4);
+        documento.fila = documento.hoja.getRow(5);
         for(int i = 0; i < (diasTrabajados.size()); i++){
             documento.definirAncho(i+7, 1300);
             documento.agregarCelda(i+7, documento.fila).setCellValue(diasTrabajados.get(i).dia);
-            //documento.celda.setCellStyle(documento.fila.getCell(6).getCellStyle());
             documento.bloquear(true);
         }
-        documento.fila = documento.hoja.getRow(5);
+        documento.fila = documento.hoja.getRow(6);
         for(int i = 0; i < diasTrabajados.size(); i++){
             documento.agregarCelda(i+7,documento.fila).setCellValue(diasTrabajados.get(i).diaEnt);
             documento.bloquear(true);

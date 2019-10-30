@@ -130,6 +130,7 @@ public class Cabal extends MetodoDePago implements Runnable{
                     Trabajador t = trabajadores.get(i).trabajador;
                     System.out.println("Persona en cabal " + t.getNombre());
                     bw.write(linea(t.getCabal(),t.getNombre() + " " + t.getApellido(),String.valueOf(t.getDocumento()),Sueldo.generar(Sueldo.formatear(t.montoCobrar(dias)))));
+                    System.out.println(t.montoCobrar(dias));
                     montoTotal += Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias)));
                     cooperativas.get(t.getCoop()-1).add();
                     cooperativas.get(t.getCoop()-1).addMonto(Double.parseDouble(Sueldo.formatear(t.montoCobrar(dias))));

@@ -15,7 +15,7 @@ public class Etapas {
     }
     
     public void agregarRuta(String ruta){
-        this.rutaArchivo = ruta;
+        this.rutaArchivo = ruta + dameNombre();
     }
     
     public String dameRuta(){

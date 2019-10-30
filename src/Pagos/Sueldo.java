@@ -10,7 +10,7 @@ public class Sueldo {
     }
     
     public static String formatear(Double monto){
-        DecimalFormat formato = new DecimalFormat("#.00");
+        DecimalFormat formato = new DecimalFormat("#,00");
         return formato.format(monto);
     }
     

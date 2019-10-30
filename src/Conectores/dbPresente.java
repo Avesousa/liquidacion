@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextArea;
 
 public class dbPresente extends Conexion implements Runnable {
@@ -18,26 +20,30 @@ public class dbPresente extends Conexion implements Runnable {
     private String[] asistio = {"",""};
     private String[] sancionado = {"",""};
     private String[] certificado = {"",""};
+    private String reclamo;
+    private String type;
     
     private void actualizar(){
         this.certificado[0] =   "SELECT status FROM presentismo_db.certificate WHERE employee = (SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+") AND date = '" + date + "' AND status = 'APPROVED'";
-        this.certificado[1] =   "INSERT INTO presentismo_db.issue(user,type,name,date,comment,user_related,status) "+
+        this.certificado[1] =   "INSERT INTO presentismo_db.certificate(user,date_from,date_to,status,supervisor,type,employee) "+
+                                "VALUES("+user+",'"+date+"','"+date+"','APPROVED',"+user+","+6+","+
+                                "(SELECT id FROM presentismo_db.user WHERE custom_id = " + employee + "))";
+        this.sancionado[0] =    "SELECT type FROM presentismo_db.issue WHERE user_related = (SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+") AND date = '" + date + "' AND status = 'APPROVED'";
+        this.sancionado[1] =    "INSERT INTO presentismo_db.issue(user,type,name,date,comment,user_related,status) "+
                                 "VALUES("+user+","+23+",'Sanción de planilla','"+ date + "'," +
                                 "'Está sanción creada automáticamente desde las planillas'," + 
                                 "(SELECT id FROM presentismo_db.user WHERE custom_id = " + employee +"),'APPROVED')";
-        this.sancionado[0] =    "SELECT type FROM presentismo_db.issue WHERE user_related = (SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+") AND date = '" + date + "' AND status = 'APPROVED'";
-        this.sancionado[1] =    "INSERT INTO presentismo_db.certificate(user,date_from,date_to,status,supervisor,type,employee) "+
-                                "VALUES("+user+",'"+date+"','"+date+"','APPROVED',"+user+","+6+","+
-                                "(SELECT id FROM presentismo_db.user WHERE custom_id = " + employee + "))";
         this.asistio[0] =   "SELECT method FROM presentismo_db.assistance WHERE employee = (SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+") AND date = '" + date + "'";
         this.asistio[1] =   "INSERT INTO presentismo_db.assistance (date,employee,user,method,certificate) "+
                             "VALUES('"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+")"+
                             ","+user+",'PLANILLA',"+primaryKey+")";
+        this.reclamo = "INSERT INTO incentivo.reclamo VALUES(NULL,NULL,'"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+"),'"+type+"','"+user+"','"+tipo+"')";
     }
-    public void datos(Date date, int employee, int user){
+    public void datos(Date date, int employee, int user, String tipo){
         this.date = date;
         this.employee = employee;
         this.user = user;
+        this.type = tipo;
     }
     public void definir(String tipo){
         this.tipo = tipo;
@@ -45,35 +51,40 @@ public class dbPresente extends Conexion implements Runnable {
     public void agregarAreaDeTexto(JTextArea area){
         this.area = area;
     }
+    
     private void hacer(){
-        switch(tipo){
-            case "asistencia":
-                try {
+        try {
+            switch(tipo){
+                case "asistencia":
                     crear(asistio[1],false);
-                } catch (Exception e) {
-                    area.append("Error en crear asistencia: " + e + "\n");
-                }
-                break;
-                
-            case "certificado":
-                try {
+                    break;
+                case "certificado":
                     crear(certificado[1],true);
                     actualizar();
                     crear(asistio[1],false);
-                } catch (Exception e) {
-                    area.append("Error en crear certificado: " + e + "\n");
-                }
-                break;
-            
-            case "sancion":
-                try {
+                    break;
+                case "sancion":
                     crear(sancionado[1],false);
+                    break;
+            }
+            if(type.equals("Reclamos")){
+                try {
+                    crear(reclamo,false);
                 } catch (Exception e) {
-                    area.append("Error en crear sanción: " + e + "\n");
+                     area.append("ERROR - asociado: " + employee + " - RECLAMOS: "+ e + "\n");
+                     new dbError(date,employee,"Error en: " + tipo,"Se ha generado el siguiente error: " + e, user, type);
                 }
-                break;
+            }
+            area.append("[" + tipo + "]: Se ha generado correctamente del id " + employee + " para el día " + date + "\n");
+        } catch (Exception e) {
+            area.append("ERROR - asociado: " + employee + " - "+tipo+": " + e + "\n");
+            try {   
+                new dbError(date,employee,"Error en: " + tipo,"Se ha generado el siguiente error: " + e, user, type);
+            } catch (SQLException ex) {
+                area.append("ERROR - asociado: " + employee + " - PROBLEMA EN EL ERROR: " + e + "\n");
+                area.append("ERROR: " + ex);
+            }
         }
-        area.append("[" + tipo + "]: Se ha generado correctamente del id " + employee + " para el día " + date + "\n");
     }
     private void crear(String sql, boolean certificado) throws SQLException{
         ps = conector.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -104,7 +115,7 @@ public class dbPresente extends Conexion implements Runnable {
             if(verificar())
                 hacer();
             else
-                new dbError(date,employee,"Tiene registrado una fecha","El empleado ya tiene registrado una sanción, un certificado o un presente", user);
+                new dbError(date,employee,"Tiene registrado una fecha","El asociado ya tiene un registro en está fecha", user, type);
         } catch (Exception e) {
             area.append("Error en hacer: " + e + "\n");
         }

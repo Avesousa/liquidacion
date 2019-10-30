@@ -25,6 +25,7 @@ public class Cargar extends Thread {
     private double dias;
     private int user;
     private int recuperadores;
+    private String tipo;
 
     public Cargar(List<String> lista, CargarPlanillas ob){
         super();
@@ -45,20 +46,21 @@ public class Cargar extends Thread {
             doc.traerHoja(0);
             dias = doc.traerFila(3).getCell(3).getNumericCellValue();
             recuperadores =(int)doc.traerFila(2).getCell(3).getNumericCellValue();
+            tipo = doc.traerFila(4).getCell(3).getStringCellValue();
             for(int fila = 0; fila < recuperadores; fila++){
-                doc.fila = doc.traerFila(fila+6);
+                doc.fila = doc.traerFila(fila+7);
                 try {
                     int id = Integer.parseInt(doc.fila.getCell(0).getStringCellValue());
                     escribirComentario(fila,id);
                     CellType tipoCelda = doc.fila.getCell((7+(int)dias)).getCachedFormulaResultType();
                     if(tipoCelda == CellType.NUMERIC){
                         for(int j = 7; j < dias+7; j++ ){
-                            doc.fila = doc.traerFila(fila+6);
+                            doc.fila = doc.traerFila(fila+7);
                             destinador(doc.fila.getCell(j).getNumericCellValue(),id,doc.fila.getCell(j).getColumnIndex());
                         }
                     } else {
                         for(int j = 7; j < dias+7; j++){
-                            doc.fila = doc.traerFila(fila+6);
+                            doc.fila = doc.traerFila(fila+7);
                             CellType celda = doc.fila.getCell(j).getCellType();
                             if(celda == CellType.NUMERIC){
                                 if(doc.fila.getCell(j).getNumericCellValue() > 0
@@ -74,7 +76,7 @@ public class Cargar extends Thread {
                     e.printStackTrace();
                 }    
                 barra.setValue((fila+1)*100/recuperadores);
-                    
+
             }
         }
     }     
@@ -85,13 +87,13 @@ public class Cargar extends Thread {
         String valor;
         System.out.println(tipo);
         if(tipo == CellType.NUMERIC)
-            valor = String.valueOf(doc.traerFila(fila+6).getCell(9+(int)dias).getNumericCellValue());
+            valor = String.valueOf(doc.traerFila(fila+7).getCell(9+(int)dias).getNumericCellValue());
         else
-            valor = doc.traerFila(fila+6).getCell(9+(int)dias).getStringCellValue();
+            valor = doc.traerFila(fila+7).getCell(9+(int)dias).getStringCellValue();
 
         try {
             if(!valor.equals("") || !valor.equals(" ")){
-                new dbError(Fecha.convertir(new Date()), id, "COMENTARIO EN PLANILLA", valor, user);
+                new dbError(Fecha.convertir(new Date()), id, "COMENTARIO EN PLANILLA", valor, user, this.tipo);
                 respuesta.append("[CARGANDO] - CARGANDO COMENTARIO: " + valor + " de " + id + "\n" );
             }
                 
@@ -103,8 +105,8 @@ public class Cargar extends Thread {
  
     
     private void destinador(double valor, int id, int col){
-        int dia = (int)doc.traerFila(5).getCell(col).getNumericCellValue();
-        int mes = (int)doc.traerFila(3).getCell(col).getNumericCellValue();
+        int dia = (int)doc.traerFila(6).getCell(col).getNumericCellValue();
+        int mes = (int)doc.traerFila(4).getCell(col).getNumericCellValue();
         int anio = 0;
         Date fechaActual = new Date();
         int mesActual = (fechaActual.getMonth()+1);
@@ -115,7 +117,7 @@ public class Cargar extends Thread {
         java.sql.Date fecha = new java.sql.Date(anio,mes-1,dia);
         dbPresente co = new dbPresente();
         co.agregarAreaDeTexto(respuesta);
-        co.datos(fecha,id,user);
+        co.datos(fecha,id,user,tipo);
         switch((int)valor){
             case(1):
                 co.definir("asistencia");
@@ -130,7 +132,7 @@ public class Cargar extends Thread {
                 return;
             default:
                 try {
-                    new dbError(fecha, id, "ASISTENCIA ERRÓNEA", "EL IDENTIFICADOR DE LA ASISTENCIA ES ERRONEO", user);
+                    new dbError(fecha, id, "ASISTENCIA ERRÓNEA", "EL IDENTIFICADOR DE LA ASISTENCIA ES ERRONEO", user,tipo);
                     respuesta.append("[CARGANDO] - ASISTENCIA ERRÓNEA DE: " + id + "\n" );
                 } catch (Exception e) {
                     respuesta.append("[CARGANDO] - ERROR AL CARGAR UNA ASISTENCIA ERRÓNEA: " + e + "\n" );
