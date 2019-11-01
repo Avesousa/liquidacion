@@ -85,7 +85,7 @@ public class Generar implements Runnable{
                                     e.printStackTrace();
                                 }
                             }
-                            new Thread(new HacerBarra(((j+1)*100)/datos.size(),barra));
+                            //new Thread(new HacerBarra(((j+1)*100)/datos.size(),barra));
                             texto.setText("Se está cargando " + coor.etapas.get(etapa).toString() + " " + (j+1) + "/" + datos.size());
                             deshabilitarCelda(datos.get(j).sueldo,documento.fila,(String)datos.get(j).dameDatos().get(5));
                         }

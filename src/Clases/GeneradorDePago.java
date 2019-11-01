@@ -34,11 +34,7 @@ public class GeneradorDePago {
             carpeta.mkdirs();
             diasHabiles = traerDiasHabiles(fechaI,fechaF);
             try {
-                List<FechaDeTrabajo> trabajador;
-                if(this.motivo.equals("Incentivo"))
-                    trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
-                else //if(this.motivo.equals("Reclamos"))
-                    trabajador = new dbTrabajador().traerDiasReclamados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true);
+                List<FechaDeTrabajo> trabajador = new dbTrabajador().traerDiasTrabajados(Fecha.convertir(fechaI.getTime()), Fecha.convertir(fechaF.getTime()), true, this.motivo.equals("Reclamos"));
                 crearPago(trabajador);
                 
             } catch (SQLException ex) {
