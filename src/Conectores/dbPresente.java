@@ -40,7 +40,7 @@ public class dbPresente extends Conexion implements Runnable {
         this.asistio[1] =   "INSERT INTO presentismo_db.assistance (date,employee,user,method,certificate) "+
                             "VALUES('"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+")"+
                             ","+user+",'PLANILLA',"+primaryKey+")";
-        this.reclamo = "INSERT INTO incentivo.reclamo VALUES(NULL,NULL,'"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+"),'"+type+"','"+user+"','"+tipo+"')";
+        this.reclamo = "INSERT INTO incentivo.reclamo VALUES(NULL,NULL,'"+date+"',(SELECT id FROM presentismo_db.user WHERE custom_id = "+employee+"),'"+type+"','"+user+"','"+tipo+"',"+days+",0)";
         this.usuario = "SELECT id FROM presentismo_db.user WHERE custom_id = "+employee;
     }
     public void datos(Date date, int employee, int user, String tipo, int days){
